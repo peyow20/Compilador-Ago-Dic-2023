@@ -1,0 +1,2402 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    ARR
+    CORCHDER
+    CORCHIZQ
+    MOD
+    RETURN
+    VOID
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> PROGRAM ID PUNCOM vars acum_func MAIN PARIZQ PARDER bloque
+Rule 2     funcion -> FUNC TIPO ID PARIZQ TIPO ID PARDER vars bloque
+Rule 3     acum_func -> funcion acum_func
+Rule 4     acum_func -> empty
+Rule 5     vars -> VAR id DOSPUN TIPO PUNCOM asignacion_id
+Rule 6     id -> ID acum_id
+Rule 7     acum_id -> COMA ID acum_id
+Rule 8     acum_id -> empty
+Rule 9     asignacion_id -> id DOSPUN TIPO PUNCOM asignacion_id
+Rule 10    asignacion_id -> empty
+Rule 11    TIPO -> INT
+Rule 12    TIPO -> FLOAT
+Rule 13    TIPO -> CHAR
+Rule 14    bloque -> LLAVIZQ multiples_estatutos LLAVDER
+Rule 15    estatuto -> asignacion
+Rule 16    estatuto -> condicion
+Rule 17    estatuto -> escritura
+Rule 18    estatuto -> while_condicion
+Rule 19    estatuto -> for_condicion
+Rule 20    multiples_estatutos -> estatuto multiples_estatutos
+Rule 21    multiples_estatutos -> empty
+Rule 22    asignacion -> ID IGUAL expresion PUNCOM
+Rule 23    escritura -> PRINT PARIZQ print_expresion PARDER PUNCOM
+Rule 24    print_expresion -> expresion multiples_print
+Rule 25    print_expresion -> CTESTRING multiples_print
+Rule 26    multiples_print -> COMA print_expresion
+Rule 27    multiples_print -> empty
+Rule 28    condicion -> IF PARIZQ expresion PARDER bloque PUNCOM
+Rule 29    condicion -> IF PARIZQ expresion PARDER bloque else_condicion PUNCOM
+Rule 30    else_condicion -> ELSE bloque
+Rule 31    while_condicion -> WHILE PARIZQ expresion PARDER DO bloque
+Rule 32    for_condicion -> FOR asignacion TO expresion DO bloque
+Rule 33    expresion -> expresion AND expresion
+Rule 34    expresion -> expresion OR expresion
+Rule 35    expresion -> exp
+Rule 36    expresion -> exp MAYOR exp
+Rule 37    expresion -> exp MENOR exp
+Rule 38    expresion -> exp DIFF exp
+Rule 39    exp -> termino exp_operacion
+Rule 40    exp_operacion -> MAS termino exp_operacion
+Rule 41    exp_operacion -> MENOS termino exp_operacion
+Rule 42    exp_operacion -> empty
+Rule 43    termino -> factor termino_operador
+Rule 44    termino_operador -> POR factor termino_operador
+Rule 45    termino_operador -> DIV factor termino_operador
+Rule 46    termino_operador -> empty
+Rule 47    factor -> PARIZQ expresion PARDER
+Rule 48    factor -> MAS var_cte
+Rule 49    factor -> MENOS var_cte
+Rule 50    factor -> var_cte
+Rule 51    factor -> empty
+Rule 52    var_cte -> ID
+Rule 53    var_cte -> CTEI
+Rule 54    var_cte -> CTEF
+Rule 55    var_cte -> CTEC
+Rule 56    empty -> <empty>
+
+Terminals, with rules where they appear
+
+AND                  : 33
+ARR                  : 
+CHAR                 : 13
+COMA                 : 7 26
+CORCHDER             : 
+CORCHIZQ             : 
+CTEC                 : 55
+CTEF                 : 54
+CTEI                 : 53
+CTESTRING            : 25
+DIFF                 : 38
+DIV                  : 45
+DO                   : 31 32
+DOSPUN               : 5 9
+ELSE                 : 30
+FLOAT                : 12
+FOR                  : 32
+FUNC                 : 2
+ID                   : 1 2 2 6 7 22 52
+IF                   : 28 29
+IGUAL                : 22
+INT                  : 11
+LLAVDER              : 14
+LLAVIZQ              : 14
+MAIN                 : 1
+MAS                  : 40 48
+MAYOR                : 36
+MENOR                : 37
+MENOS                : 41 49
+MOD                  : 
+OR                   : 34
+PARDER               : 1 2 23 28 29 31 47
+PARIZQ               : 1 2 23 28 29 31 47
+POR                  : 44
+PRINT                : 23
+PROGRAM              : 1
+PUNCOM               : 1 5 9 22 23 28 29
+RETURN               : 
+TO                   : 32
+VAR                  : 5
+VOID                 : 
+WHILE                : 31
+error                : 
+
+Nonterminals, with rules where they appear
+
+TIPO                 : 2 2 5 9
+acum_func            : 1 3
+acum_id              : 6 7
+asignacion           : 15 32
+asignacion_id        : 5 9
+bloque               : 1 2 28 29 30 31 32
+condicion            : 16
+else_condicion       : 29
+empty                : 4 8 10 21 27 42 46 51
+escritura            : 17
+estatuto             : 20
+exp                  : 35 36 36 37 37 38 38
+exp_operacion        : 39 40 41
+expresion            : 22 24 28 29 31 32 33 33 34 34 47
+factor               : 43 44 45
+for_condicion        : 19
+funcion              : 3
+id                   : 5 9
+multiples_estatutos  : 14 20
+multiples_print      : 24 25
+print_expresion      : 23 26
+program              : 0
+termino              : 39 40 41
+termino_operador     : 43 44 45
+var_cte              : 48 49 50
+vars                 : 1 2
+while_condicion      : 18
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . PROGRAM ID PUNCOM vars acum_func MAIN PARIZQ PARDER bloque
+
+    PROGRAM         shift and go to state 2
+
+    program                        shift and go to state 1
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> PROGRAM . ID PUNCOM vars acum_func MAIN PARIZQ PARDER bloque
+
+    ID              shift and go to state 3
+
+
+state 3
+
+    (1) program -> PROGRAM ID . PUNCOM vars acum_func MAIN PARIZQ PARDER bloque
+
+    PUNCOM          shift and go to state 4
+
+
+state 4
+
+    (1) program -> PROGRAM ID PUNCOM . vars acum_func MAIN PARIZQ PARDER bloque
+    (5) vars -> . VAR id DOSPUN TIPO PUNCOM asignacion_id
+
+    VAR             shift and go to state 6
+
+    vars                           shift and go to state 5
+
+state 5
+
+    (1) program -> PROGRAM ID PUNCOM vars . acum_func MAIN PARIZQ PARDER bloque
+    (3) acum_func -> . funcion acum_func
+    (4) acum_func -> . empty
+    (2) funcion -> . FUNC TIPO ID PARIZQ TIPO ID PARDER vars bloque
+    (56) empty -> .
+
+    FUNC            shift and go to state 10
+    MAIN            reduce using rule 56 (empty -> .)
+
+    acum_func                      shift and go to state 7
+    funcion                        shift and go to state 8
+    empty                          shift and go to state 9
+
+state 6
+
+    (5) vars -> VAR . id DOSPUN TIPO PUNCOM asignacion_id
+    (6) id -> . ID acum_id
+
+    ID              shift and go to state 12
+
+    id                             shift and go to state 11
+
+state 7
+
+    (1) program -> PROGRAM ID PUNCOM vars acum_func . MAIN PARIZQ PARDER bloque
+
+    MAIN            shift and go to state 13
+
+
+state 8
+
+    (3) acum_func -> funcion . acum_func
+    (3) acum_func -> . funcion acum_func
+    (4) acum_func -> . empty
+    (2) funcion -> . FUNC TIPO ID PARIZQ TIPO ID PARDER vars bloque
+    (56) empty -> .
+
+    FUNC            shift and go to state 10
+    MAIN            reduce using rule 56 (empty -> .)
+
+    funcion                        shift and go to state 8
+    acum_func                      shift and go to state 14
+    empty                          shift and go to state 9
+
+state 9
+
+    (4) acum_func -> empty .
+
+    MAIN            reduce using rule 4 (acum_func -> empty .)
+
+
+state 10
+
+    (2) funcion -> FUNC . TIPO ID PARIZQ TIPO ID PARDER vars bloque
+    (11) TIPO -> . INT
+    (12) TIPO -> . FLOAT
+    (13) TIPO -> . CHAR
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+    CHAR            shift and go to state 18
+
+    TIPO                           shift and go to state 15
+
+state 11
+
+    (5) vars -> VAR id . DOSPUN TIPO PUNCOM asignacion_id
+
+    DOSPUN          shift and go to state 19
+
+
+state 12
+
+    (6) id -> ID . acum_id
+    (7) acum_id -> . COMA ID acum_id
+    (8) acum_id -> . empty
+    (56) empty -> .
+
+    COMA            shift and go to state 21
+    DOSPUN          reduce using rule 56 (empty -> .)
+
+    acum_id                        shift and go to state 20
+    empty                          shift and go to state 22
+
+state 13
+
+    (1) program -> PROGRAM ID PUNCOM vars acum_func MAIN . PARIZQ PARDER bloque
+
+    PARIZQ          shift and go to state 23
+
+
+state 14
+
+    (3) acum_func -> funcion acum_func .
+
+    MAIN            reduce using rule 3 (acum_func -> funcion acum_func .)
+
+
+state 15
+
+    (2) funcion -> FUNC TIPO . ID PARIZQ TIPO ID PARDER vars bloque
+
+    ID              shift and go to state 24
+
+
+state 16
+
+    (11) TIPO -> INT .
+
+    ID              reduce using rule 11 (TIPO -> INT .)
+    PUNCOM          reduce using rule 11 (TIPO -> INT .)
+
+
+state 17
+
+    (12) TIPO -> FLOAT .
+
+    ID              reduce using rule 12 (TIPO -> FLOAT .)
+    PUNCOM          reduce using rule 12 (TIPO -> FLOAT .)
+
+
+state 18
+
+    (13) TIPO -> CHAR .
+
+    ID              reduce using rule 13 (TIPO -> CHAR .)
+    PUNCOM          reduce using rule 13 (TIPO -> CHAR .)
+
+
+state 19
+
+    (5) vars -> VAR id DOSPUN . TIPO PUNCOM asignacion_id
+    (11) TIPO -> . INT
+    (12) TIPO -> . FLOAT
+    (13) TIPO -> . CHAR
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+    CHAR            shift and go to state 18
+
+    TIPO                           shift and go to state 25
+
+state 20
+
+    (6) id -> ID acum_id .
+
+    DOSPUN          reduce using rule 6 (id -> ID acum_id .)
+
+
+state 21
+
+    (7) acum_id -> COMA . ID acum_id
+
+    ID              shift and go to state 26
+
+
+state 22
+
+    (8) acum_id -> empty .
+
+    DOSPUN          reduce using rule 8 (acum_id -> empty .)
+
+
+state 23
+
+    (1) program -> PROGRAM ID PUNCOM vars acum_func MAIN PARIZQ . PARDER bloque
+
+    PARDER          shift and go to state 27
+
+
+state 24
+
+    (2) funcion -> FUNC TIPO ID . PARIZQ TIPO ID PARDER vars bloque
+
+    PARIZQ          shift and go to state 28
+
+
+state 25
+
+    (5) vars -> VAR id DOSPUN TIPO . PUNCOM asignacion_id
+
+    PUNCOM          shift and go to state 29
+
+
+state 26
+
+    (7) acum_id -> COMA ID . acum_id
+    (7) acum_id -> . COMA ID acum_id
+    (8) acum_id -> . empty
+    (56) empty -> .
+
+    COMA            shift and go to state 21
+    DOSPUN          reduce using rule 56 (empty -> .)
+
+    acum_id                        shift and go to state 30
+    empty                          shift and go to state 22
+
+state 27
+
+    (1) program -> PROGRAM ID PUNCOM vars acum_func MAIN PARIZQ PARDER . bloque
+    (14) bloque -> . LLAVIZQ multiples_estatutos LLAVDER
+
+    LLAVIZQ         shift and go to state 32
+
+    bloque                         shift and go to state 31
+
+state 28
+
+    (2) funcion -> FUNC TIPO ID PARIZQ . TIPO ID PARDER vars bloque
+    (11) TIPO -> . INT
+    (12) TIPO -> . FLOAT
+    (13) TIPO -> . CHAR
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+    CHAR            shift and go to state 18
+
+    TIPO                           shift and go to state 33
+
+state 29
+
+    (5) vars -> VAR id DOSPUN TIPO PUNCOM . asignacion_id
+    (9) asignacion_id -> . id DOSPUN TIPO PUNCOM asignacion_id
+    (10) asignacion_id -> . empty
+    (6) id -> . ID acum_id
+    (56) empty -> .
+
+    ID              shift and go to state 12
+    FUNC            reduce using rule 56 (empty -> .)
+    MAIN            reduce using rule 56 (empty -> .)
+    LLAVIZQ         reduce using rule 56 (empty -> .)
+
+    id                             shift and go to state 34
+    asignacion_id                  shift and go to state 35
+    empty                          shift and go to state 36
+
+state 30
+
+    (7) acum_id -> COMA ID acum_id .
+
+    DOSPUN          reduce using rule 7 (acum_id -> COMA ID acum_id .)
+
+
+state 31
+
+    (1) program -> PROGRAM ID PUNCOM vars acum_func MAIN PARIZQ PARDER bloque .
+
+    $end            reduce using rule 1 (program -> PROGRAM ID PUNCOM vars acum_func MAIN PARIZQ PARDER bloque .)
+
+
+state 32
+
+    (14) bloque -> LLAVIZQ . multiples_estatutos LLAVDER
+    (20) multiples_estatutos -> . estatuto multiples_estatutos
+    (21) multiples_estatutos -> . empty
+    (15) estatuto -> . asignacion
+    (16) estatuto -> . condicion
+    (17) estatuto -> . escritura
+    (18) estatuto -> . while_condicion
+    (19) estatuto -> . for_condicion
+    (56) empty -> .
+    (22) asignacion -> . ID IGUAL expresion PUNCOM
+    (28) condicion -> . IF PARIZQ expresion PARDER bloque PUNCOM
+    (29) condicion -> . IF PARIZQ expresion PARDER bloque else_condicion PUNCOM
+    (23) escritura -> . PRINT PARIZQ print_expresion PARDER PUNCOM
+    (31) while_condicion -> . WHILE PARIZQ expresion PARDER DO bloque
+    (32) for_condicion -> . FOR asignacion TO expresion DO bloque
+
+    LLAVDER         reduce using rule 56 (empty -> .)
+    ID              shift and go to state 45
+    IF              shift and go to state 46
+    PRINT           shift and go to state 47
+    WHILE           shift and go to state 48
+    FOR             shift and go to state 49
+
+    multiples_estatutos            shift and go to state 37
+    estatuto                       shift and go to state 38
+    empty                          shift and go to state 39
+    asignacion                     shift and go to state 40
+    condicion                      shift and go to state 41
+    escritura                      shift and go to state 42
+    while_condicion                shift and go to state 43
+    for_condicion                  shift and go to state 44
+
+state 33
+
+    (2) funcion -> FUNC TIPO ID PARIZQ TIPO . ID PARDER vars bloque
+
+    ID              shift and go to state 50
+
+
+state 34
+
+    (9) asignacion_id -> id . DOSPUN TIPO PUNCOM asignacion_id
+
+    DOSPUN          shift and go to state 51
+
+
+state 35
+
+    (5) vars -> VAR id DOSPUN TIPO PUNCOM asignacion_id .
+
+    FUNC            reduce using rule 5 (vars -> VAR id DOSPUN TIPO PUNCOM asignacion_id .)
+    MAIN            reduce using rule 5 (vars -> VAR id DOSPUN TIPO PUNCOM asignacion_id .)
+    LLAVIZQ         reduce using rule 5 (vars -> VAR id DOSPUN TIPO PUNCOM asignacion_id .)
+
+
+state 36
+
+    (10) asignacion_id -> empty .
+
+    FUNC            reduce using rule 10 (asignacion_id -> empty .)
+    MAIN            reduce using rule 10 (asignacion_id -> empty .)
+    LLAVIZQ         reduce using rule 10 (asignacion_id -> empty .)
+
+
+state 37
+
+    (14) bloque -> LLAVIZQ multiples_estatutos . LLAVDER
+
+    LLAVDER         shift and go to state 52
+
+
+state 38
+
+    (20) multiples_estatutos -> estatuto . multiples_estatutos
+    (20) multiples_estatutos -> . estatuto multiples_estatutos
+    (21) multiples_estatutos -> . empty
+    (15) estatuto -> . asignacion
+    (16) estatuto -> . condicion
+    (17) estatuto -> . escritura
+    (18) estatuto -> . while_condicion
+    (19) estatuto -> . for_condicion
+    (56) empty -> .
+    (22) asignacion -> . ID IGUAL expresion PUNCOM
+    (28) condicion -> . IF PARIZQ expresion PARDER bloque PUNCOM
+    (29) condicion -> . IF PARIZQ expresion PARDER bloque else_condicion PUNCOM
+    (23) escritura -> . PRINT PARIZQ print_expresion PARDER PUNCOM
+    (31) while_condicion -> . WHILE PARIZQ expresion PARDER DO bloque
+    (32) for_condicion -> . FOR asignacion TO expresion DO bloque
+
+    LLAVDER         reduce using rule 56 (empty -> .)
+    ID              shift and go to state 45
+    IF              shift and go to state 46
+    PRINT           shift and go to state 47
+    WHILE           shift and go to state 48
+    FOR             shift and go to state 49
+
+    estatuto                       shift and go to state 38
+    multiples_estatutos            shift and go to state 53
+    empty                          shift and go to state 39
+    asignacion                     shift and go to state 40
+    condicion                      shift and go to state 41
+    escritura                      shift and go to state 42
+    while_condicion                shift and go to state 43
+    for_condicion                  shift and go to state 44
+
+state 39
+
+    (21) multiples_estatutos -> empty .
+
+    LLAVDER         reduce using rule 21 (multiples_estatutos -> empty .)
+
+
+state 40
+
+    (15) estatuto -> asignacion .
+
+    ID              reduce using rule 15 (estatuto -> asignacion .)
+    IF              reduce using rule 15 (estatuto -> asignacion .)
+    PRINT           reduce using rule 15 (estatuto -> asignacion .)
+    WHILE           reduce using rule 15 (estatuto -> asignacion .)
+    FOR             reduce using rule 15 (estatuto -> asignacion .)
+    LLAVDER         reduce using rule 15 (estatuto -> asignacion .)
+
+
+state 41
+
+    (16) estatuto -> condicion .
+
+    ID              reduce using rule 16 (estatuto -> condicion .)
+    IF              reduce using rule 16 (estatuto -> condicion .)
+    PRINT           reduce using rule 16 (estatuto -> condicion .)
+    WHILE           reduce using rule 16 (estatuto -> condicion .)
+    FOR             reduce using rule 16 (estatuto -> condicion .)
+    LLAVDER         reduce using rule 16 (estatuto -> condicion .)
+
+
+state 42
+
+    (17) estatuto -> escritura .
+
+    ID              reduce using rule 17 (estatuto -> escritura .)
+    IF              reduce using rule 17 (estatuto -> escritura .)
+    PRINT           reduce using rule 17 (estatuto -> escritura .)
+    WHILE           reduce using rule 17 (estatuto -> escritura .)
+    FOR             reduce using rule 17 (estatuto -> escritura .)
+    LLAVDER         reduce using rule 17 (estatuto -> escritura .)
+
+
+state 43
+
+    (18) estatuto -> while_condicion .
+
+    ID              reduce using rule 18 (estatuto -> while_condicion .)
+    IF              reduce using rule 18 (estatuto -> while_condicion .)
+    PRINT           reduce using rule 18 (estatuto -> while_condicion .)
+    WHILE           reduce using rule 18 (estatuto -> while_condicion .)
+    FOR             reduce using rule 18 (estatuto -> while_condicion .)
+    LLAVDER         reduce using rule 18 (estatuto -> while_condicion .)
+
+
+state 44
+
+    (19) estatuto -> for_condicion .
+
+    ID              reduce using rule 19 (estatuto -> for_condicion .)
+    IF              reduce using rule 19 (estatuto -> for_condicion .)
+    PRINT           reduce using rule 19 (estatuto -> for_condicion .)
+    WHILE           reduce using rule 19 (estatuto -> for_condicion .)
+    FOR             reduce using rule 19 (estatuto -> for_condicion .)
+    LLAVDER         reduce using rule 19 (estatuto -> for_condicion .)
+
+
+state 45
+
+    (22) asignacion -> ID . IGUAL expresion PUNCOM
+
+    IGUAL           shift and go to state 54
+
+
+state 46
+
+    (28) condicion -> IF . PARIZQ expresion PARDER bloque PUNCOM
+    (29) condicion -> IF . PARIZQ expresion PARDER bloque else_condicion PUNCOM
+
+    PARIZQ          shift and go to state 55
+
+
+state 47
+
+    (23) escritura -> PRINT . PARIZQ print_expresion PARDER PUNCOM
+
+    PARIZQ          shift and go to state 56
+
+
+state 48
+
+    (31) while_condicion -> WHILE . PARIZQ expresion PARDER DO bloque
+
+    PARIZQ          shift and go to state 57
+
+
+state 49
+
+    (32) for_condicion -> FOR . asignacion TO expresion DO bloque
+    (22) asignacion -> . ID IGUAL expresion PUNCOM
+
+    ID              shift and go to state 45
+
+    asignacion                     shift and go to state 58
+
+state 50
+
+    (2) funcion -> FUNC TIPO ID PARIZQ TIPO ID . PARDER vars bloque
+
+    PARDER          shift and go to state 59
+
+
+state 51
+
+    (9) asignacion_id -> id DOSPUN . TIPO PUNCOM asignacion_id
+    (11) TIPO -> . INT
+    (12) TIPO -> . FLOAT
+    (13) TIPO -> . CHAR
+
+    INT             shift and go to state 16
+    FLOAT           shift and go to state 17
+    CHAR            shift and go to state 18
+
+    TIPO                           shift and go to state 60
+
+state 52
+
+    (14) bloque -> LLAVIZQ multiples_estatutos LLAVDER .
+
+    $end            reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    FUNC            reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    MAIN            reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    PUNCOM          reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    ELSE            reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    ID              reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    IF              reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    PRINT           reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    WHILE           reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    FOR             reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+    LLAVDER         reduce using rule 14 (bloque -> LLAVIZQ multiples_estatutos LLAVDER .)
+
+
+state 53
+
+    (20) multiples_estatutos -> estatuto multiples_estatutos .
+
+    LLAVDER         reduce using rule 20 (multiples_estatutos -> estatuto multiples_estatutos .)
+
+
+state 54
+
+    (22) asignacion -> ID IGUAL . expresion PUNCOM
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    expresion                      shift and go to state 62
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 55
+
+    (28) condicion -> IF PARIZQ . expresion PARDER bloque PUNCOM
+    (29) condicion -> IF PARIZQ . expresion PARDER bloque else_condicion PUNCOM
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    expresion                      shift and go to state 74
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 56
+
+    (23) escritura -> PRINT PARIZQ . print_expresion PARDER PUNCOM
+    (24) print_expresion -> . expresion multiples_print
+    (25) print_expresion -> . CTESTRING multiples_print
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    CTESTRING       shift and go to state 77
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    print_expresion                shift and go to state 75
+    expresion                      shift and go to state 76
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 57
+
+    (31) while_condicion -> WHILE PARIZQ . expresion PARDER DO bloque
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    expresion                      shift and go to state 78
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 58
+
+    (32) for_condicion -> FOR asignacion . TO expresion DO bloque
+
+    TO              shift and go to state 79
+
+
+state 59
+
+    (2) funcion -> FUNC TIPO ID PARIZQ TIPO ID PARDER . vars bloque
+    (5) vars -> . VAR id DOSPUN TIPO PUNCOM asignacion_id
+
+    VAR             shift and go to state 6
+
+    vars                           shift and go to state 80
+
+state 60
+
+    (9) asignacion_id -> id DOSPUN TIPO . PUNCOM asignacion_id
+
+    PUNCOM          shift and go to state 81
+
+
+state 61
+
+    (52) var_cte -> ID .
+
+    POR             reduce using rule 52 (var_cte -> ID .)
+    DIV             reduce using rule 52 (var_cte -> ID .)
+    MAS             reduce using rule 52 (var_cte -> ID .)
+    MENOS           reduce using rule 52 (var_cte -> ID .)
+    MAYOR           reduce using rule 52 (var_cte -> ID .)
+    MENOR           reduce using rule 52 (var_cte -> ID .)
+    DIFF            reduce using rule 52 (var_cte -> ID .)
+    PUNCOM          reduce using rule 52 (var_cte -> ID .)
+    AND             reduce using rule 52 (var_cte -> ID .)
+    OR              reduce using rule 52 (var_cte -> ID .)
+    PARDER          reduce using rule 52 (var_cte -> ID .)
+    COMA            reduce using rule 52 (var_cte -> ID .)
+    DO              reduce using rule 52 (var_cte -> ID .)
+
+
+state 62
+
+    (22) asignacion -> ID IGUAL expresion . PUNCOM
+    (33) expresion -> expresion . AND expresion
+    (34) expresion -> expresion . OR expresion
+
+    PUNCOM          shift and go to state 82
+    AND             shift and go to state 83
+    OR              shift and go to state 84
+
+
+state 63
+
+    (35) expresion -> exp .
+    (36) expresion -> exp . MAYOR exp
+    (37) expresion -> exp . MENOR exp
+    (38) expresion -> exp . DIFF exp
+
+    PUNCOM          reduce using rule 35 (expresion -> exp .)
+    AND             reduce using rule 35 (expresion -> exp .)
+    OR              reduce using rule 35 (expresion -> exp .)
+    PARDER          reduce using rule 35 (expresion -> exp .)
+    COMA            reduce using rule 35 (expresion -> exp .)
+    DO              reduce using rule 35 (expresion -> exp .)
+    MAYOR           shift and go to state 85
+    MENOR           shift and go to state 86
+    DIFF            shift and go to state 87
+
+
+state 64
+
+    (39) exp -> termino . exp_operacion
+    (40) exp_operacion -> . MAS termino exp_operacion
+    (41) exp_operacion -> . MENOS termino exp_operacion
+    (42) exp_operacion -> . empty
+    (56) empty -> .
+
+    MAS             shift and go to state 89
+    MENOS           shift and go to state 90
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+    exp_operacion                  shift and go to state 88
+    empty                          shift and go to state 91
+
+state 65
+
+    (43) termino -> factor . termino_operador
+    (44) termino_operador -> . POR factor termino_operador
+    (45) termino_operador -> . DIV factor termino_operador
+    (46) termino_operador -> . empty
+    (56) empty -> .
+
+    POR             shift and go to state 93
+    DIV             shift and go to state 94
+    MAS             reduce using rule 56 (empty -> .)
+    MENOS           reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+    termino_operador               shift and go to state 92
+    empty                          shift and go to state 95
+
+state 66
+
+    (47) factor -> PARIZQ . expresion PARDER
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    expresion                      shift and go to state 96
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 67
+
+    (48) factor -> MAS . var_cte
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+
+    var_cte                        shift and go to state 97
+
+state 68
+
+    (50) factor -> var_cte .
+
+    POR             reduce using rule 50 (factor -> var_cte .)
+    DIV             reduce using rule 50 (factor -> var_cte .)
+    MAS             reduce using rule 50 (factor -> var_cte .)
+    MENOS           reduce using rule 50 (factor -> var_cte .)
+    MAYOR           reduce using rule 50 (factor -> var_cte .)
+    MENOR           reduce using rule 50 (factor -> var_cte .)
+    DIFF            reduce using rule 50 (factor -> var_cte .)
+    PUNCOM          reduce using rule 50 (factor -> var_cte .)
+    AND             reduce using rule 50 (factor -> var_cte .)
+    OR              reduce using rule 50 (factor -> var_cte .)
+    PARDER          reduce using rule 50 (factor -> var_cte .)
+    COMA            reduce using rule 50 (factor -> var_cte .)
+    DO              reduce using rule 50 (factor -> var_cte .)
+
+
+state 69
+
+    (49) factor -> MENOS . var_cte
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+
+    var_cte                        shift and go to state 98
+
+state 70
+
+    (51) factor -> empty .
+
+    POR             reduce using rule 51 (factor -> empty .)
+    DIV             reduce using rule 51 (factor -> empty .)
+    MAS             reduce using rule 51 (factor -> empty .)
+    MENOS           reduce using rule 51 (factor -> empty .)
+    MAYOR           reduce using rule 51 (factor -> empty .)
+    MENOR           reduce using rule 51 (factor -> empty .)
+    DIFF            reduce using rule 51 (factor -> empty .)
+    PUNCOM          reduce using rule 51 (factor -> empty .)
+    AND             reduce using rule 51 (factor -> empty .)
+    OR              reduce using rule 51 (factor -> empty .)
+    PARDER          reduce using rule 51 (factor -> empty .)
+    COMA            reduce using rule 51 (factor -> empty .)
+    DO              reduce using rule 51 (factor -> empty .)
+
+
+state 71
+
+    (53) var_cte -> CTEI .
+
+    POR             reduce using rule 53 (var_cte -> CTEI .)
+    DIV             reduce using rule 53 (var_cte -> CTEI .)
+    MAS             reduce using rule 53 (var_cte -> CTEI .)
+    MENOS           reduce using rule 53 (var_cte -> CTEI .)
+    MAYOR           reduce using rule 53 (var_cte -> CTEI .)
+    MENOR           reduce using rule 53 (var_cte -> CTEI .)
+    DIFF            reduce using rule 53 (var_cte -> CTEI .)
+    PUNCOM          reduce using rule 53 (var_cte -> CTEI .)
+    AND             reduce using rule 53 (var_cte -> CTEI .)
+    OR              reduce using rule 53 (var_cte -> CTEI .)
+    PARDER          reduce using rule 53 (var_cte -> CTEI .)
+    COMA            reduce using rule 53 (var_cte -> CTEI .)
+    DO              reduce using rule 53 (var_cte -> CTEI .)
+
+
+state 72
+
+    (54) var_cte -> CTEF .
+
+    POR             reduce using rule 54 (var_cte -> CTEF .)
+    DIV             reduce using rule 54 (var_cte -> CTEF .)
+    MAS             reduce using rule 54 (var_cte -> CTEF .)
+    MENOS           reduce using rule 54 (var_cte -> CTEF .)
+    MAYOR           reduce using rule 54 (var_cte -> CTEF .)
+    MENOR           reduce using rule 54 (var_cte -> CTEF .)
+    DIFF            reduce using rule 54 (var_cte -> CTEF .)
+    PUNCOM          reduce using rule 54 (var_cte -> CTEF .)
+    AND             reduce using rule 54 (var_cte -> CTEF .)
+    OR              reduce using rule 54 (var_cte -> CTEF .)
+    PARDER          reduce using rule 54 (var_cte -> CTEF .)
+    COMA            reduce using rule 54 (var_cte -> CTEF .)
+    DO              reduce using rule 54 (var_cte -> CTEF .)
+
+
+state 73
+
+    (55) var_cte -> CTEC .
+
+    POR             reduce using rule 55 (var_cte -> CTEC .)
+    DIV             reduce using rule 55 (var_cte -> CTEC .)
+    MAS             reduce using rule 55 (var_cte -> CTEC .)
+    MENOS           reduce using rule 55 (var_cte -> CTEC .)
+    MAYOR           reduce using rule 55 (var_cte -> CTEC .)
+    MENOR           reduce using rule 55 (var_cte -> CTEC .)
+    DIFF            reduce using rule 55 (var_cte -> CTEC .)
+    PUNCOM          reduce using rule 55 (var_cte -> CTEC .)
+    AND             reduce using rule 55 (var_cte -> CTEC .)
+    OR              reduce using rule 55 (var_cte -> CTEC .)
+    PARDER          reduce using rule 55 (var_cte -> CTEC .)
+    COMA            reduce using rule 55 (var_cte -> CTEC .)
+    DO              reduce using rule 55 (var_cte -> CTEC .)
+
+
+state 74
+
+    (28) condicion -> IF PARIZQ expresion . PARDER bloque PUNCOM
+    (29) condicion -> IF PARIZQ expresion . PARDER bloque else_condicion PUNCOM
+    (33) expresion -> expresion . AND expresion
+    (34) expresion -> expresion . OR expresion
+
+    PARDER          shift and go to state 99
+    AND             shift and go to state 83
+    OR              shift and go to state 84
+
+
+state 75
+
+    (23) escritura -> PRINT PARIZQ print_expresion . PARDER PUNCOM
+
+    PARDER          shift and go to state 100
+
+
+state 76
+
+    (24) print_expresion -> expresion . multiples_print
+    (33) expresion -> expresion . AND expresion
+    (34) expresion -> expresion . OR expresion
+    (26) multiples_print -> . COMA print_expresion
+    (27) multiples_print -> . empty
+    (56) empty -> .
+
+    AND             shift and go to state 83
+    OR              shift and go to state 84
+    COMA            shift and go to state 102
+    PARDER          reduce using rule 56 (empty -> .)
+
+    multiples_print                shift and go to state 101
+    empty                          shift and go to state 103
+
+state 77
+
+    (25) print_expresion -> CTESTRING . multiples_print
+    (26) multiples_print -> . COMA print_expresion
+    (27) multiples_print -> . empty
+    (56) empty -> .
+
+    COMA            shift and go to state 102
+    PARDER          reduce using rule 56 (empty -> .)
+
+    multiples_print                shift and go to state 104
+    empty                          shift and go to state 103
+
+state 78
+
+    (31) while_condicion -> WHILE PARIZQ expresion . PARDER DO bloque
+    (33) expresion -> expresion . AND expresion
+    (34) expresion -> expresion . OR expresion
+
+    PARDER          shift and go to state 105
+    AND             shift and go to state 83
+    OR              shift and go to state 84
+
+
+state 79
+
+    (32) for_condicion -> FOR asignacion TO . expresion DO bloque
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    expresion                      shift and go to state 106
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 80
+
+    (2) funcion -> FUNC TIPO ID PARIZQ TIPO ID PARDER vars . bloque
+    (14) bloque -> . LLAVIZQ multiples_estatutos LLAVDER
+
+    LLAVIZQ         shift and go to state 32
+
+    bloque                         shift and go to state 107
+
+state 81
+
+    (9) asignacion_id -> id DOSPUN TIPO PUNCOM . asignacion_id
+    (9) asignacion_id -> . id DOSPUN TIPO PUNCOM asignacion_id
+    (10) asignacion_id -> . empty
+    (6) id -> . ID acum_id
+    (56) empty -> .
+
+    ID              shift and go to state 12
+    FUNC            reduce using rule 56 (empty -> .)
+    MAIN            reduce using rule 56 (empty -> .)
+    LLAVIZQ         reduce using rule 56 (empty -> .)
+
+    id                             shift and go to state 34
+    asignacion_id                  shift and go to state 108
+    empty                          shift and go to state 36
+
+state 82
+
+    (22) asignacion -> ID IGUAL expresion PUNCOM .
+
+    ID              reduce using rule 22 (asignacion -> ID IGUAL expresion PUNCOM .)
+    IF              reduce using rule 22 (asignacion -> ID IGUAL expresion PUNCOM .)
+    PRINT           reduce using rule 22 (asignacion -> ID IGUAL expresion PUNCOM .)
+    WHILE           reduce using rule 22 (asignacion -> ID IGUAL expresion PUNCOM .)
+    FOR             reduce using rule 22 (asignacion -> ID IGUAL expresion PUNCOM .)
+    LLAVDER         reduce using rule 22 (asignacion -> ID IGUAL expresion PUNCOM .)
+    TO              reduce using rule 22 (asignacion -> ID IGUAL expresion PUNCOM .)
+
+
+state 83
+
+    (33) expresion -> expresion AND . expresion
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    expresion                      shift and go to state 109
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 84
+
+    (34) expresion -> expresion OR . expresion
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    expresion                      shift and go to state 110
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 85
+
+    (36) expresion -> exp MAYOR . exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    exp                            shift and go to state 111
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 86
+
+    (37) expresion -> exp MENOR . exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    exp                            shift and go to state 112
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 87
+
+    (38) expresion -> exp DIFF . exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    exp                            shift and go to state 113
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 88
+
+    (39) exp -> termino exp_operacion .
+
+    MAYOR           reduce using rule 39 (exp -> termino exp_operacion .)
+    MENOR           reduce using rule 39 (exp -> termino exp_operacion .)
+    DIFF            reduce using rule 39 (exp -> termino exp_operacion .)
+    PUNCOM          reduce using rule 39 (exp -> termino exp_operacion .)
+    AND             reduce using rule 39 (exp -> termino exp_operacion .)
+    OR              reduce using rule 39 (exp -> termino exp_operacion .)
+    PARDER          reduce using rule 39 (exp -> termino exp_operacion .)
+    COMA            reduce using rule 39 (exp -> termino exp_operacion .)
+    DO              reduce using rule 39 (exp -> termino exp_operacion .)
+
+
+state 89
+
+    (40) exp_operacion -> MAS . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    termino                        shift and go to state 114
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 90
+
+    (41) exp_operacion -> MENOS . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    termino                        shift and go to state 115
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 91
+
+    (42) exp_operacion -> empty .
+
+    MAYOR           reduce using rule 42 (exp_operacion -> empty .)
+    MENOR           reduce using rule 42 (exp_operacion -> empty .)
+    DIFF            reduce using rule 42 (exp_operacion -> empty .)
+    PUNCOM          reduce using rule 42 (exp_operacion -> empty .)
+    AND             reduce using rule 42 (exp_operacion -> empty .)
+    OR              reduce using rule 42 (exp_operacion -> empty .)
+    PARDER          reduce using rule 42 (exp_operacion -> empty .)
+    COMA            reduce using rule 42 (exp_operacion -> empty .)
+    DO              reduce using rule 42 (exp_operacion -> empty .)
+
+
+state 92
+
+    (43) termino -> factor termino_operador .
+
+    MAS             reduce using rule 43 (termino -> factor termino_operador .)
+    MENOS           reduce using rule 43 (termino -> factor termino_operador .)
+    MAYOR           reduce using rule 43 (termino -> factor termino_operador .)
+    MENOR           reduce using rule 43 (termino -> factor termino_operador .)
+    DIFF            reduce using rule 43 (termino -> factor termino_operador .)
+    PUNCOM          reduce using rule 43 (termino -> factor termino_operador .)
+    AND             reduce using rule 43 (termino -> factor termino_operador .)
+    OR              reduce using rule 43 (termino -> factor termino_operador .)
+    PARDER          reduce using rule 43 (termino -> factor termino_operador .)
+    COMA            reduce using rule 43 (termino -> factor termino_operador .)
+    DO              reduce using rule 43 (termino -> factor termino_operador .)
+
+
+state 93
+
+    (44) termino_operador -> POR . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    factor                         shift and go to state 116
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 94
+
+    (45) termino_operador -> DIV . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    factor                         shift and go to state 117
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 95
+
+    (46) termino_operador -> empty .
+
+    MAS             reduce using rule 46 (termino_operador -> empty .)
+    MENOS           reduce using rule 46 (termino_operador -> empty .)
+    MAYOR           reduce using rule 46 (termino_operador -> empty .)
+    MENOR           reduce using rule 46 (termino_operador -> empty .)
+    DIFF            reduce using rule 46 (termino_operador -> empty .)
+    PUNCOM          reduce using rule 46 (termino_operador -> empty .)
+    AND             reduce using rule 46 (termino_operador -> empty .)
+    OR              reduce using rule 46 (termino_operador -> empty .)
+    PARDER          reduce using rule 46 (termino_operador -> empty .)
+    COMA            reduce using rule 46 (termino_operador -> empty .)
+    DO              reduce using rule 46 (termino_operador -> empty .)
+
+
+state 96
+
+    (47) factor -> PARIZQ expresion . PARDER
+    (33) expresion -> expresion . AND expresion
+    (34) expresion -> expresion . OR expresion
+
+    PARDER          shift and go to state 118
+    AND             shift and go to state 83
+    OR              shift and go to state 84
+
+
+state 97
+
+    (48) factor -> MAS var_cte .
+
+    POR             reduce using rule 48 (factor -> MAS var_cte .)
+    DIV             reduce using rule 48 (factor -> MAS var_cte .)
+    MAS             reduce using rule 48 (factor -> MAS var_cte .)
+    MENOS           reduce using rule 48 (factor -> MAS var_cte .)
+    MAYOR           reduce using rule 48 (factor -> MAS var_cte .)
+    MENOR           reduce using rule 48 (factor -> MAS var_cte .)
+    DIFF            reduce using rule 48 (factor -> MAS var_cte .)
+    PUNCOM          reduce using rule 48 (factor -> MAS var_cte .)
+    AND             reduce using rule 48 (factor -> MAS var_cte .)
+    OR              reduce using rule 48 (factor -> MAS var_cte .)
+    PARDER          reduce using rule 48 (factor -> MAS var_cte .)
+    COMA            reduce using rule 48 (factor -> MAS var_cte .)
+    DO              reduce using rule 48 (factor -> MAS var_cte .)
+
+
+state 98
+
+    (49) factor -> MENOS var_cte .
+
+    POR             reduce using rule 49 (factor -> MENOS var_cte .)
+    DIV             reduce using rule 49 (factor -> MENOS var_cte .)
+    MAS             reduce using rule 49 (factor -> MENOS var_cte .)
+    MENOS           reduce using rule 49 (factor -> MENOS var_cte .)
+    MAYOR           reduce using rule 49 (factor -> MENOS var_cte .)
+    MENOR           reduce using rule 49 (factor -> MENOS var_cte .)
+    DIFF            reduce using rule 49 (factor -> MENOS var_cte .)
+    PUNCOM          reduce using rule 49 (factor -> MENOS var_cte .)
+    AND             reduce using rule 49 (factor -> MENOS var_cte .)
+    OR              reduce using rule 49 (factor -> MENOS var_cte .)
+    PARDER          reduce using rule 49 (factor -> MENOS var_cte .)
+    COMA            reduce using rule 49 (factor -> MENOS var_cte .)
+    DO              reduce using rule 49 (factor -> MENOS var_cte .)
+
+
+state 99
+
+    (28) condicion -> IF PARIZQ expresion PARDER . bloque PUNCOM
+    (29) condicion -> IF PARIZQ expresion PARDER . bloque else_condicion PUNCOM
+    (14) bloque -> . LLAVIZQ multiples_estatutos LLAVDER
+
+    LLAVIZQ         shift and go to state 32
+
+    bloque                         shift and go to state 119
+
+state 100
+
+    (23) escritura -> PRINT PARIZQ print_expresion PARDER . PUNCOM
+
+    PUNCOM          shift and go to state 120
+
+
+state 101
+
+    (24) print_expresion -> expresion multiples_print .
+
+    PARDER          reduce using rule 24 (print_expresion -> expresion multiples_print .)
+
+
+state 102
+
+    (26) multiples_print -> COMA . print_expresion
+    (24) print_expresion -> . expresion multiples_print
+    (25) print_expresion -> . CTESTRING multiples_print
+    (33) expresion -> . expresion AND expresion
+    (34) expresion -> . expresion OR expresion
+    (35) expresion -> . exp
+    (36) expresion -> . exp MAYOR exp
+    (37) expresion -> . exp MENOR exp
+    (38) expresion -> . exp DIFF exp
+    (39) exp -> . termino exp_operacion
+    (43) termino -> . factor termino_operador
+    (47) factor -> . PARIZQ expresion PARDER
+    (48) factor -> . MAS var_cte
+    (49) factor -> . MENOS var_cte
+    (50) factor -> . var_cte
+    (51) factor -> . empty
+    (52) var_cte -> . ID
+    (53) var_cte -> . CTEI
+    (54) var_cte -> . CTEF
+    (55) var_cte -> . CTEC
+    (56) empty -> .
+
+  ! shift/reduce conflict for MAS resolved as shift
+  ! shift/reduce conflict for MENOS resolved as shift
+    CTESTRING       shift and go to state 77
+    PARIZQ          shift and go to state 66
+    MAS             shift and go to state 67
+    MENOS           shift and go to state 69
+    ID              shift and go to state 61
+    CTEI            shift and go to state 71
+    CTEF            shift and go to state 72
+    CTEC            shift and go to state 73
+    POR             reduce using rule 56 (empty -> .)
+    DIV             reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+
+  ! MAS             [ reduce using rule 56 (empty -> .) ]
+  ! MENOS           [ reduce using rule 56 (empty -> .) ]
+
+    print_expresion                shift and go to state 121
+    expresion                      shift and go to state 76
+    exp                            shift and go to state 63
+    termino                        shift and go to state 64
+    factor                         shift and go to state 65
+    var_cte                        shift and go to state 68
+    empty                          shift and go to state 70
+
+state 103
+
+    (27) multiples_print -> empty .
+
+    PARDER          reduce using rule 27 (multiples_print -> empty .)
+
+
+state 104
+
+    (25) print_expresion -> CTESTRING multiples_print .
+
+    PARDER          reduce using rule 25 (print_expresion -> CTESTRING multiples_print .)
+
+
+state 105
+
+    (31) while_condicion -> WHILE PARIZQ expresion PARDER . DO bloque
+
+    DO              shift and go to state 122
+
+
+state 106
+
+    (32) for_condicion -> FOR asignacion TO expresion . DO bloque
+    (33) expresion -> expresion . AND expresion
+    (34) expresion -> expresion . OR expresion
+
+    DO              shift and go to state 123
+    AND             shift and go to state 83
+    OR              shift and go to state 84
+
+
+state 107
+
+    (2) funcion -> FUNC TIPO ID PARIZQ TIPO ID PARDER vars bloque .
+
+    FUNC            reduce using rule 2 (funcion -> FUNC TIPO ID PARIZQ TIPO ID PARDER vars bloque .)
+    MAIN            reduce using rule 2 (funcion -> FUNC TIPO ID PARIZQ TIPO ID PARDER vars bloque .)
+
+
+state 108
+
+    (9) asignacion_id -> id DOSPUN TIPO PUNCOM asignacion_id .
+
+    FUNC            reduce using rule 9 (asignacion_id -> id DOSPUN TIPO PUNCOM asignacion_id .)
+    MAIN            reduce using rule 9 (asignacion_id -> id DOSPUN TIPO PUNCOM asignacion_id .)
+    LLAVIZQ         reduce using rule 9 (asignacion_id -> id DOSPUN TIPO PUNCOM asignacion_id .)
+
+
+state 109
+
+    (33) expresion -> expresion AND expresion .
+    (33) expresion -> expresion . AND expresion
+    (34) expresion -> expresion . OR expresion
+
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    PUNCOM          reduce using rule 33 (expresion -> expresion AND expresion .)
+    PARDER          reduce using rule 33 (expresion -> expresion AND expresion .)
+    COMA            reduce using rule 33 (expresion -> expresion AND expresion .)
+    DO              reduce using rule 33 (expresion -> expresion AND expresion .)
+    AND             shift and go to state 83
+    OR              shift and go to state 84
+
+  ! AND             [ reduce using rule 33 (expresion -> expresion AND expresion .) ]
+  ! OR              [ reduce using rule 33 (expresion -> expresion AND expresion .) ]
+
+
+state 110
+
+    (34) expresion -> expresion OR expresion .
+    (33) expresion -> expresion . AND expresion
+    (34) expresion -> expresion . OR expresion
+
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    PUNCOM          reduce using rule 34 (expresion -> expresion OR expresion .)
+    PARDER          reduce using rule 34 (expresion -> expresion OR expresion .)
+    COMA            reduce using rule 34 (expresion -> expresion OR expresion .)
+    DO              reduce using rule 34 (expresion -> expresion OR expresion .)
+    AND             shift and go to state 83
+    OR              shift and go to state 84
+
+  ! AND             [ reduce using rule 34 (expresion -> expresion OR expresion .) ]
+  ! OR              [ reduce using rule 34 (expresion -> expresion OR expresion .) ]
+
+
+state 111
+
+    (36) expresion -> exp MAYOR exp .
+
+    PUNCOM          reduce using rule 36 (expresion -> exp MAYOR exp .)
+    AND             reduce using rule 36 (expresion -> exp MAYOR exp .)
+    OR              reduce using rule 36 (expresion -> exp MAYOR exp .)
+    PARDER          reduce using rule 36 (expresion -> exp MAYOR exp .)
+    COMA            reduce using rule 36 (expresion -> exp MAYOR exp .)
+    DO              reduce using rule 36 (expresion -> exp MAYOR exp .)
+
+
+state 112
+
+    (37) expresion -> exp MENOR exp .
+
+    PUNCOM          reduce using rule 37 (expresion -> exp MENOR exp .)
+    AND             reduce using rule 37 (expresion -> exp MENOR exp .)
+    OR              reduce using rule 37 (expresion -> exp MENOR exp .)
+    PARDER          reduce using rule 37 (expresion -> exp MENOR exp .)
+    COMA            reduce using rule 37 (expresion -> exp MENOR exp .)
+    DO              reduce using rule 37 (expresion -> exp MENOR exp .)
+
+
+state 113
+
+    (38) expresion -> exp DIFF exp .
+
+    PUNCOM          reduce using rule 38 (expresion -> exp DIFF exp .)
+    AND             reduce using rule 38 (expresion -> exp DIFF exp .)
+    OR              reduce using rule 38 (expresion -> exp DIFF exp .)
+    PARDER          reduce using rule 38 (expresion -> exp DIFF exp .)
+    COMA            reduce using rule 38 (expresion -> exp DIFF exp .)
+    DO              reduce using rule 38 (expresion -> exp DIFF exp .)
+
+
+state 114
+
+    (40) exp_operacion -> MAS termino . exp_operacion
+    (40) exp_operacion -> . MAS termino exp_operacion
+    (41) exp_operacion -> . MENOS termino exp_operacion
+    (42) exp_operacion -> . empty
+    (56) empty -> .
+
+    MAS             shift and go to state 89
+    MENOS           shift and go to state 90
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+    exp_operacion                  shift and go to state 124
+    empty                          shift and go to state 91
+
+state 115
+
+    (41) exp_operacion -> MENOS termino . exp_operacion
+    (40) exp_operacion -> . MAS termino exp_operacion
+    (41) exp_operacion -> . MENOS termino exp_operacion
+    (42) exp_operacion -> . empty
+    (56) empty -> .
+
+    MAS             shift and go to state 89
+    MENOS           shift and go to state 90
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+    exp_operacion                  shift and go to state 125
+    empty                          shift and go to state 91
+
+state 116
+
+    (44) termino_operador -> POR factor . termino_operador
+    (44) termino_operador -> . POR factor termino_operador
+    (45) termino_operador -> . DIV factor termino_operador
+    (46) termino_operador -> . empty
+    (56) empty -> .
+
+    POR             shift and go to state 93
+    DIV             shift and go to state 94
+    MAS             reduce using rule 56 (empty -> .)
+    MENOS           reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+    termino_operador               shift and go to state 126
+    empty                          shift and go to state 95
+
+state 117
+
+    (45) termino_operador -> DIV factor . termino_operador
+    (44) termino_operador -> . POR factor termino_operador
+    (45) termino_operador -> . DIV factor termino_operador
+    (46) termino_operador -> . empty
+    (56) empty -> .
+
+    POR             shift and go to state 93
+    DIV             shift and go to state 94
+    MAS             reduce using rule 56 (empty -> .)
+    MENOS           reduce using rule 56 (empty -> .)
+    MAYOR           reduce using rule 56 (empty -> .)
+    MENOR           reduce using rule 56 (empty -> .)
+    DIFF            reduce using rule 56 (empty -> .)
+    PUNCOM          reduce using rule 56 (empty -> .)
+    AND             reduce using rule 56 (empty -> .)
+    OR              reduce using rule 56 (empty -> .)
+    PARDER          reduce using rule 56 (empty -> .)
+    COMA            reduce using rule 56 (empty -> .)
+    DO              reduce using rule 56 (empty -> .)
+
+    termino_operador               shift and go to state 127
+    empty                          shift and go to state 95
+
+state 118
+
+    (47) factor -> PARIZQ expresion PARDER .
+
+    POR             reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    DIV             reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    MAS             reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    MENOS           reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    MAYOR           reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    MENOR           reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    DIFF            reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    PUNCOM          reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    AND             reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    OR              reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    PARDER          reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    COMA            reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+    DO              reduce using rule 47 (factor -> PARIZQ expresion PARDER .)
+
+
+state 119
+
+    (28) condicion -> IF PARIZQ expresion PARDER bloque . PUNCOM
+    (29) condicion -> IF PARIZQ expresion PARDER bloque . else_condicion PUNCOM
+    (30) else_condicion -> . ELSE bloque
+
+    PUNCOM          shift and go to state 128
+    ELSE            shift and go to state 130
+
+    else_condicion                 shift and go to state 129
+
+state 120
+
+    (23) escritura -> PRINT PARIZQ print_expresion PARDER PUNCOM .
+
+    ID              reduce using rule 23 (escritura -> PRINT PARIZQ print_expresion PARDER PUNCOM .)
+    IF              reduce using rule 23 (escritura -> PRINT PARIZQ print_expresion PARDER PUNCOM .)
+    PRINT           reduce using rule 23 (escritura -> PRINT PARIZQ print_expresion PARDER PUNCOM .)
+    WHILE           reduce using rule 23 (escritura -> PRINT PARIZQ print_expresion PARDER PUNCOM .)
+    FOR             reduce using rule 23 (escritura -> PRINT PARIZQ print_expresion PARDER PUNCOM .)
+    LLAVDER         reduce using rule 23 (escritura -> PRINT PARIZQ print_expresion PARDER PUNCOM .)
+
+
+state 121
+
+    (26) multiples_print -> COMA print_expresion .
+
+    PARDER          reduce using rule 26 (multiples_print -> COMA print_expresion .)
+
+
+state 122
+
+    (31) while_condicion -> WHILE PARIZQ expresion PARDER DO . bloque
+    (14) bloque -> . LLAVIZQ multiples_estatutos LLAVDER
+
+    LLAVIZQ         shift and go to state 32
+
+    bloque                         shift and go to state 131
+
+state 123
+
+    (32) for_condicion -> FOR asignacion TO expresion DO . bloque
+    (14) bloque -> . LLAVIZQ multiples_estatutos LLAVDER
+
+    LLAVIZQ         shift and go to state 32
+
+    bloque                         shift and go to state 132
+
+state 124
+
+    (40) exp_operacion -> MAS termino exp_operacion .
+
+    MAYOR           reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+    MENOR           reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+    DIFF            reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+    PUNCOM          reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+    AND             reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+    OR              reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+    PARDER          reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+    COMA            reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+    DO              reduce using rule 40 (exp_operacion -> MAS termino exp_operacion .)
+
+
+state 125
+
+    (41) exp_operacion -> MENOS termino exp_operacion .
+
+    MAYOR           reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+    MENOR           reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+    DIFF            reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+    PUNCOM          reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+    AND             reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+    OR              reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+    PARDER          reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+    COMA            reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+    DO              reduce using rule 41 (exp_operacion -> MENOS termino exp_operacion .)
+
+
+state 126
+
+    (44) termino_operador -> POR factor termino_operador .
+
+    MAS             reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    MENOS           reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    MAYOR           reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    MENOR           reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    DIFF            reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    PUNCOM          reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    AND             reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    OR              reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    PARDER          reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    COMA            reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+    DO              reduce using rule 44 (termino_operador -> POR factor termino_operador .)
+
+
+state 127
+
+    (45) termino_operador -> DIV factor termino_operador .
+
+    MAS             reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    MENOS           reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    MAYOR           reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    MENOR           reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    DIFF            reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    PUNCOM          reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    AND             reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    OR              reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    PARDER          reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    COMA            reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+    DO              reduce using rule 45 (termino_operador -> DIV factor termino_operador .)
+
+
+state 128
+
+    (28) condicion -> IF PARIZQ expresion PARDER bloque PUNCOM .
+
+    ID              reduce using rule 28 (condicion -> IF PARIZQ expresion PARDER bloque PUNCOM .)
+    IF              reduce using rule 28 (condicion -> IF PARIZQ expresion PARDER bloque PUNCOM .)
+    PRINT           reduce using rule 28 (condicion -> IF PARIZQ expresion PARDER bloque PUNCOM .)
+    WHILE           reduce using rule 28 (condicion -> IF PARIZQ expresion PARDER bloque PUNCOM .)
+    FOR             reduce using rule 28 (condicion -> IF PARIZQ expresion PARDER bloque PUNCOM .)
+    LLAVDER         reduce using rule 28 (condicion -> IF PARIZQ expresion PARDER bloque PUNCOM .)
+
+
+state 129
+
+    (29) condicion -> IF PARIZQ expresion PARDER bloque else_condicion . PUNCOM
+
+    PUNCOM          shift and go to state 133
+
+
+state 130
+
+    (30) else_condicion -> ELSE . bloque
+    (14) bloque -> . LLAVIZQ multiples_estatutos LLAVDER
+
+    LLAVIZQ         shift and go to state 32
+
+    bloque                         shift and go to state 134
+
+state 131
+
+    (31) while_condicion -> WHILE PARIZQ expresion PARDER DO bloque .
+
+    ID              reduce using rule 31 (while_condicion -> WHILE PARIZQ expresion PARDER DO bloque .)
+    IF              reduce using rule 31 (while_condicion -> WHILE PARIZQ expresion PARDER DO bloque .)
+    PRINT           reduce using rule 31 (while_condicion -> WHILE PARIZQ expresion PARDER DO bloque .)
+    WHILE           reduce using rule 31 (while_condicion -> WHILE PARIZQ expresion PARDER DO bloque .)
+    FOR             reduce using rule 31 (while_condicion -> WHILE PARIZQ expresion PARDER DO bloque .)
+    LLAVDER         reduce using rule 31 (while_condicion -> WHILE PARIZQ expresion PARDER DO bloque .)
+
+
+state 132
+
+    (32) for_condicion -> FOR asignacion TO expresion DO bloque .
+
+    ID              reduce using rule 32 (for_condicion -> FOR asignacion TO expresion DO bloque .)
+    IF              reduce using rule 32 (for_condicion -> FOR asignacion TO expresion DO bloque .)
+    PRINT           reduce using rule 32 (for_condicion -> FOR asignacion TO expresion DO bloque .)
+    WHILE           reduce using rule 32 (for_condicion -> FOR asignacion TO expresion DO bloque .)
+    FOR             reduce using rule 32 (for_condicion -> FOR asignacion TO expresion DO bloque .)
+    LLAVDER         reduce using rule 32 (for_condicion -> FOR asignacion TO expresion DO bloque .)
+
+
+state 133
+
+    (29) condicion -> IF PARIZQ expresion PARDER bloque else_condicion PUNCOM .
+
+    ID              reduce using rule 29 (condicion -> IF PARIZQ expresion PARDER bloque else_condicion PUNCOM .)
+    IF              reduce using rule 29 (condicion -> IF PARIZQ expresion PARDER bloque else_condicion PUNCOM .)
+    PRINT           reduce using rule 29 (condicion -> IF PARIZQ expresion PARDER bloque else_condicion PUNCOM .)
+    WHILE           reduce using rule 29 (condicion -> IF PARIZQ expresion PARDER bloque else_condicion PUNCOM .)
+    FOR             reduce using rule 29 (condicion -> IF PARIZQ expresion PARDER bloque else_condicion PUNCOM .)
+    LLAVDER         reduce using rule 29 (condicion -> IF PARIZQ expresion PARDER bloque else_condicion PUNCOM .)
+
+
+state 134
+
+    (30) else_condicion -> ELSE bloque .
+
+    PUNCOM          reduce using rule 30 (else_condicion -> ELSE bloque .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for MAS in state 54 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 54 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 55 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 55 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 56 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 56 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 57 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 57 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 66 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 66 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 79 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 79 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 83 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 83 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 84 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 84 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 85 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 85 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 86 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 86 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 87 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 87 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 89 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 89 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 90 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 90 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 93 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 93 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 94 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 94 resolved as shift
+WARNING: shift/reduce conflict for MAS in state 102 resolved as shift
+WARNING: shift/reduce conflict for MENOS in state 102 resolved as shift
+WARNING: shift/reduce conflict for AND in state 109 resolved as shift
+WARNING: shift/reduce conflict for OR in state 109 resolved as shift
+WARNING: shift/reduce conflict for AND in state 110 resolved as shift
+WARNING: shift/reduce conflict for OR in state 110 resolved as shift
