@@ -3,19 +3,42 @@ import ply.yacc as yacc
 
 
 
-symbol_table={}
-
-#Puntos neuralgicos
-
-#directorio de funciones
 
 
-# Función para agregar una variable a la tabla de símbolos
-def add_variable(name, type):
-    if name in symbol_table:
-        print(f"Error: La variable '{name}' ya esta declarada.")
-    else:
-        symbol_table[name] = type
+#Direcciones de memoria
+
+global_int = 0
+global_float = 100
+global_char = 200
+local_int = 300
+local_float = 400
+local_char = 500
+constante_int = 600
+constante_float = 700
+constante_char = 800
+
+
+    
+symbol_table = { 'vars':{},
+                'dir' : {}}
+
+#Estructura para Cuadruplos
+cuad = [['','','','']]
+cont = 0
+pila_operadores = []
+pila_operandos = []
+pila_saltos = []
+
+
+
+
+#Pruebas
+print(symbol_table)
+
+
+
+
+
 
 #Reglas sintacticas
 #Esta es la estructura que debe tener mi codigo
@@ -31,17 +54,12 @@ def p_acum_func(p):
                   | empty'''
      
 #En las siguiente 4 reglas me ayudan a construir el area de las variables
-#tanto como los distintitos tipos(en este caso solo int y float) como la cantidad
+#tanto como los distintos tipos(en este caso solo int y float) como la cantidad
 def p_vars(p):
     '''vars : VAR id DOSPUN TIPO PUNCOM asignacion_id'''
-    var_type = p[4]
-    for var_name in p[2]:
-        add_variable(var_name, var_type)
-   
 
 def p_id(p):
     '''id : ID acum_id'''
-
 
 def p_acum_id(p):
     '''acum_id : COMA ID acum_id
@@ -50,8 +68,6 @@ def p_acum_id(p):
 def p_asignacion_id(p):
     '''asignacion_id : id DOSPUN TIPO PUNCOM asignacion_id
                   | empty'''
-
-
 #Esta regla define los tipos de variables que 
 def p_TIPO(p):
     '''TIPO : INT
@@ -173,6 +189,14 @@ def p_var_cte(p):
 def p_empty(p):
     '''empty :'''
     pass
+
+
+
+#Puntos neuralgicos
+
+
+
+
 
 
 parser = yacc.yacc()
