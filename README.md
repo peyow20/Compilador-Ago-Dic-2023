@@ -5,3 +5,7 @@ Se declararon todos los tokens y palabras reservadas ademas de realizarse casi t
 
 ## Avance 2
 Se arreglo la sintaxis, se hizo el cubo semantico, y se realizo parte de la semantica basica, solo se creo tabla de variables y se agregaban
+
+## Avance 4
+Se establecieron direcciones de memoria y se establecieron se agregaron las estructuras necesarias. Se tuvo un problema y la tabla de variables y cuadruplos no estan listos, hubo un error y se va a rehacer
+
