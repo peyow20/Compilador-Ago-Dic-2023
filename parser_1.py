@@ -2,9 +2,6 @@ from lexer import tokens
 import ply.yacc as yacc
 
 
-
-
-
 #Direcciones de memoria
 
 global_int = 0
@@ -17,10 +14,9 @@ constante_int = 600
 constante_float = 700
 constante_char = 800
 
-
     
 symbol_table = { 'vars':{},
-                'dir' : {}}
+                'Dir' : {}}
 
 #Estructura para Cuadruplos
 cuad = [['','','','']]
@@ -29,15 +25,9 @@ pila_operadores = []
 pila_operandos = []
 pila_saltos = []
 
-
-
-
 #Pruebas
 print(symbol_table)
-
-
-
-
+print(cuad)
 
 
 #Reglas sintacticas
@@ -193,9 +183,56 @@ def p_empty(p):
 
 
 #Puntos neuralgicos
+#Punto neuralagico para guardar variables
+def p_save_var(p):
+    'save_var'
+
+#Punto neuralgico para reconocer el tipo
+def p_type_var(p):
+    'type_var'
+
+#Punto neuralgico para asignarle el tipo a cada variable
+def p_set_vartype(p):
+    'set_vartype'
 
 
+#Punto neuralgico para agregar operadores a la pila de operadores
+def p_add_operador(p):
+    'add_operador'
 
+
+#Punto neuralgico para agregar el operador de mas
+def p_add_operando_mas(p):
+    'add_operando_mas'
+
+#Punto neuralgico para agregar el operador de menos
+def p_add_operando_menos(p):
+    'add_operando_menos'
+
+#Punto neuralgico para agregar el operador de mas
+def p_add_operando_producto(p):
+    'add_operando_producto'
+
+
+#Punto neuralgico para agregar el operador de mas
+def p_add_operando_div(p):
+    'add_operando_div'
+
+
+#Punto neuralgico para agregar el operador de mas
+def p_add_operando_condicion(p):
+    'add_operando_condicion'
+
+#Punto neuralgico para agregar el operador logico
+def p_add_operando_OR(p):
+    'add_operando_OR'
+
+def p_add_operando_AND(p):
+    'add_operando_AND'
+
+#Funcion para generacion de cuad
+def p_gen_quad(p):
+    'gen_quad'
 
 
 
