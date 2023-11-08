@@ -11,3 +11,6 @@ Se establecieron direcciones de memoria y se establecieron se agregaron las estr
 
 ## Avance 5
 Se hizo un cambio en la forma que se realizaran los puntos neuralgicos
+
+## Avance 6
+Se agregaron y desarrollaron varios puntos neuralgicos y se empezo con la creacion de cuadruplos
