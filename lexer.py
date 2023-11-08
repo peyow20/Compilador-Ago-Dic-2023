@@ -27,7 +27,7 @@ reserved = {
 tokens = ['PROGRAM', 'VAR', 'INT', 'FLOAT', 'CHAR', 'CTEI', 'CTEF', 'CTESTRING', 'CTEC', 
           'ID', 'IF', 'ELSE', 'WHILE', 'MAYOR', 'FOR', 'MENOR', 'DIFF', 'MAS', 'MENOS', 'POR', 'DIV', 'MOD',
           'LLAVIZQ', 'VOID', 'LLAVDER', 'PARIZQ', 'PARDER', 'CORCHIZQ', 'CORCHDER', 'DOSPUN', 'PUNCOM', 
-          'COMA', 'IGUAL', 'PRINT', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC']
+          'COMA', 'IGUAL', 'PRINT', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
 
 
 t_ignore = " \t"

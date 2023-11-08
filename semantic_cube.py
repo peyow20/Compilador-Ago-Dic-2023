@@ -65,4 +65,11 @@ SEMANTIC_CUBE = {
     (FLOAT, INT, "<="): BOOL,
     (FLOAT, FLOAT, "<="): BOOL,
     (BOOL, BOOL, "<="): BOOL,
+
+    # Operación igual igual
+    (INT, INT, "=="): BOOL,
+    (INT, FLOAT, "=="): BOOL,
+    (FLOAT, INT, "=="): BOOL,
+    (FLOAT, FLOAT, "=="): BOOL,
+    (BOOL, BOOL, "=="): BOOL,
 }

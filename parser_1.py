@@ -3,7 +3,6 @@ import ply.yacc as yacc
 
 
 #Direcciones de memoria
-
 global_int = 0
 global_float = 100
 global_char = 200
@@ -15,8 +14,11 @@ constante_float = 700
 constante_char = 800
 
     
-symbol_table = { 'vars':{},
-                'Dir' : {}}
+symbol_table = {}
+tipo_var = None
+
+
+param_table = []
 
 #Estructura para Cuadruplos
 cuad = [['','','','']]
@@ -25,15 +27,10 @@ pila_operadores = []
 pila_operandos = []
 pila_saltos = []
 
-#Pruebas
-print(symbol_table)
-print(cuad)
-
-
 #Reglas sintacticas
 #Esta es la estructura que debe tener mi codigo
 def p_program(p):
-    '''program : PROGRAM ID PUNCOM vars acum_func MAIN PARIZQ PARDER bloque'''
+    '''program : PROGRAM ID PUNCOM VAR vars acum_func MAIN PARIZQ PARDER bloque'''
     p[0] = "ACC"
 
 def p_funcion(p):
@@ -45,24 +42,40 @@ def p_acum_func(p):
      
 #En las siguiente 4 reglas me ayudan a construir el area de las variables
 #tanto como los distintos tipos(en este caso solo int y float) como la cantidad
+
+def p_id_lista(p):
+    '''id_lista : ID COMA id_lista
+               | ID'''
+    if len(p) == 4:  # 
+        p[0] = [p[1]] + p[3]
+    else:  #
+        p[0] = [p[1]]
+
+# Función para manejar la declaración de variables
+def handle_vars(p):
+    var_type = p[3]
+    id_list = p[1]
+    if 'vars' not in symbol_table:
+        symbol_table['vars'] = {} 
+    for var_id in id_list:
+        symbol_table['vars'][var_id] = var_type
+    p[0] = p[5]
+
 def p_vars(p):
-    '''vars : VAR id DOSPUN TIPO PUNCOM asignacion_id'''
+    '''vars : id_lista DOSPUN TIPO PUNCOM vars
+            | empty'''
+    if len(p) == 6:
+        handle_vars(p)
+    elif len(p) == 2:
+        p[0] = None
+    print(symbol_table)
+    
 
-def p_id(p):
-    '''id : ID acum_id'''
-
-def p_acum_id(p):
-    '''acum_id : COMA ID acum_id
-                | empty'''
-
-def p_asignacion_id(p):
-    '''asignacion_id : id DOSPUN TIPO PUNCOM asignacion_id
-                  | empty'''
 #Esta regla define los tipos de variables que 
 def p_TIPO(p):
-    '''TIPO : INT
-            | FLOAT
-            | CHAR'''
+    '''TIPO : INT assig_tipo_var
+            | FLOAT assig_tipo_var
+            | CHAR assig_tipo_var'''
 
 #def p_arreglo(p):
 #    '''arreglo : ARR LLAVIZQ CTEI LLAVDER'''
@@ -181,58 +194,93 @@ def p_empty(p):
     pass
 
 
+def p_read_exp(p):
+    'read_exp : '
 
-#Puntos neuralgicos
-#Punto neuralagico para guardar variables
-def p_save_var(p):
-    'save_var'
+def p_print_exp(p):
+    'print_exp : '
 
-#Punto neuralgico para reconocer el tipo
-def p_type_var(p):
-    'type_var'
-
-#Punto neuralgico para asignarle el tipo a cada variable
-def p_set_vartype(p):
-    'set_vartype'
-
+#Punto neuralgico para el tipo de variable
+def p_assig_tipo_var(p):
+    'n_tipo_var : '
+    tipo_var
+    tipo_var = p[-1]
 
 #Punto neuralgico para agregar operadores a la pila de operadores
 def p_add_operador(p):
-    'add_operador'
-
+    'add_operador : '
+    pila_operadores
+    pila_operadores.append(p[-1])
 
 #Punto neuralgico para agregar el operador de mas
 def p_add_operando_mas(p):
-    'add_operando_mas'
+    'add_operando_mas : '
+    #gen_quad(['+'])
 
 #Punto neuralgico para agregar el operador de menos
 def p_add_operando_menos(p):
-    'add_operando_menos'
+    'add_operando_menos : '
+    #gen_quad(['-'])
 
-#Punto neuralgico para agregar el operador de mas
+#Punto neuralgico para agregar el operador de por
 def p_add_operando_producto(p):
-    'add_operando_producto'
+    'add_operando_producto : '
+    #gen_quad(['*'])
 
 
-#Punto neuralgico para agregar el operador de mas
+#Punto neuralgico para agregar el operador de div
 def p_add_operando_div(p):
-    'add_operando_div'
+    'add_operando_div : '
+    # gen_quad(['/'])
 
 
-#Punto neuralgico para agregar el operador de mas
+#Punto neuralgico para agregar el operador de condicion
 def p_add_operando_condicion(p):
-    'add_operando_condicion'
+    'add_operando_condicion : '
+   # gen_quad(['>', '<', '!=', '==','<=','>='])
+
+
 
 #Punto neuralgico para agregar el operador logico
 def p_add_operando_OR(p):
-    'add_operando_OR'
+    'add_operando_OR : '
+  #  gen_quad(['||'])
 
 def p_add_operando_AND(p):
-    'add_operando_AND'
+    'add_operando_AND : '
+ #   gen_quad(['&&'])
 
 #Funcion para generacion de cuad
-def p_gen_quad(p):
-    'gen_quad'
+def p_gen_quad(oper):
+    'gen_quad : '
+
+#Funcion para generar cuadruplo de asignacion
+def p_asig(p):
+    'asig : '
+
+
+
+
+#Puntos neuralgicos para los saltos
+#Punto neuralgico para verficiar la condicion del if
+def p_if_exp(p):
+    'if_exp : '
+
+#Punto neuralgico para el salto del else
+def p_else(p):
+    'else_exp : '
+
+#Punto neuralgico para exp del while
+def p_while_exp(p):
+    'while_exp : '
+
+
+#Punto neurlagico para el salto del return del while
+def p_return_while(p):
+    'return_while : '
+
+
+
 
 
 
