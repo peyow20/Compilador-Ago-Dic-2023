@@ -46,9 +46,9 @@ def p_acum_func(p):
 def p_id_lista(p):
     '''id_lista : ID COMA id_lista
                | ID'''
-    if len(p) == 4:  # 
+    if len(p) == 4: 
         p[0] = [p[1]] + p[3]
-    else:  #
+    else: 
         p[0] = [p[1]]
 
 # Función para manejar la declaración de variables
