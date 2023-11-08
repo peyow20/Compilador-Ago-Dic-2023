@@ -9,3 +9,5 @@ Se arreglo la sintaxis, se hizo el cubo semantico, y se realizo parte de la sema
 ## Avance 4
 Se establecieron direcciones de memoria y se establecieron se agregaron las estructuras necesarias. Se tuvo un problema y la tabla de variables y cuadruplos no estan listos, hubo un error y se va a rehacer
 
+## Avance 5
+Se hizo un cambio en la forma que se realizaran los puntos neuralgicos
