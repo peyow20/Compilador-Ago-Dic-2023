@@ -73,3 +73,11 @@ SEMANTIC_CUBE = {
     (FLOAT, FLOAT, "=="): BOOL,
     (BOOL, BOOL, "=="): BOOL,
 }
+
+
+def verificar_result(operador_izq, operador_der, operador):
+    if (operador_izq, operador_der, operador) in SEMANTIC_CUBE:
+        resultado = SEMANTIC_CUBE[(operador_izq, operador_der, operador)]
+        return f"El resultado es válido: {resultado}"
+    else:
+        return 'ERROR'

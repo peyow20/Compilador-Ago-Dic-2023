@@ -1,5 +1,6 @@
 from lexer import tokens
 import ply.yacc as yacc
+from semantic_cube import SEMANTIC_CUBE
 
 
 #Direcciones de memoria
@@ -22,15 +23,18 @@ param_table = []
 
 #Estructura para Cuadruplos
 cuad = [['','','','']]
-cont = 0
+pila_tipos = []
 pila_operadores = []
 pila_operandos = []
 pila_saltos = []
+cont = 0
 
 #Reglas sintacticas
 #Esta es la estructura que debe tener mi codigo
 def p_program(p):
     '''program : PROGRAM ID PUNCOM VAR vars acum_func MAIN PARIZQ PARDER bloque'''
+    print(symbol_table)
+    print(cuad)
     p[0] = "ACC"
 
 def p_funcion(p):
@@ -68,14 +72,15 @@ def p_vars(p):
         handle_vars(p)
     elif len(p) == 2:
         p[0] = None
-    print(symbol_table)
     
 
 #Esta regla define los tipos de variables que 
 def p_TIPO(p):
-    '''TIPO : INT assig_tipo_var
-            | FLOAT assig_tipo_var
-            | CHAR assig_tipo_var'''
+    '''TIPO : INT
+            | FLOAT
+            | CHAR'''
+    #Identifico los tipos de variables
+    p[0] = p[1]
 
 #def p_arreglo(p):
 #    '''arreglo : ARR LLAVIZQ CTEI LLAVDER'''
@@ -105,6 +110,12 @@ def p_multiples_estatutos(p):
 # de los difetenes tipos de estatutos 
 def p_asignacion(p):
     '''asignacion : ID IGUAL expresion PUNCOM'''
+
+    #Genero cuadruplo de asignacion
+    op_derecho = pila_operandos.pop()
+    op_izquierdo = p[1] 
+    cuad.append(['=', op_derecho, '', op_izquierdo])
+    p[0] = p[3]
 
 
 def p_escritura(p):
@@ -152,27 +163,45 @@ def p_expresion(p):
                  | exp MENOR exp
                  | exp DIFF exp'''
 
-
 #Las siguientes dos reglas suman o restan 2 terminos con una llamada recursiva
 def p_exp(p):
     '''exp : termino exp_operacion'''
+    while pila_operadores and pila_operadores[-1] in ['+', '-']:
+        op = pila_operadores.pop()
+        gen_cuad(op)
+        #Funcion para generar un cuadruplo
+    p[0] = p[1]
 
 
 def p_exp_operacion(p):
     '''exp_operacion : MAS termino exp_operacion
                      | MENOS termino exp_operacion
                      | empty'''
-
+    #Inserto el operador a la pila
+    if len(p) == 3:
+        pila_operadores.append(p[1])
+        p[0] = p[2]
+    
+    
 #Las siguientes dos reglas multiplican o dividen 2 factores con una llamada recursiva
 
 def p_termino(p):
     '''termino : factor termino_operador'''
+    while pila_operadores and pila_operadores[-1] in ['*', '/']:
+        op = pila_operadores.pop()
+        #Funcion para generar un cuadruplo
+        gen_cuad(op)
+    p[0] = p[1]
 
 
 def p_termino_operador(p):
     '''termino_operador : POR factor termino_operador
                         | DIV factor termino_operador
                         | empty'''
+    #Inserto el operador a la pila
+    if len(p) == 3:
+        pila_operadores.append(p[1])
+        p[0] = p[2]
 
 
 def p_factor(p):
@@ -188,100 +217,33 @@ def p_var_cte(p):
                | CTEI
                | CTEF
                | CTEC'''
+    #Identifico las constantes aceptadas por el compilador
+    pila_operandos.append(p[1])
+    if p[1] in symbol_table['vars']:
+        pila_tipos.append(symbol_table['vars'][p[1]])
+    elif isinstance(p[1], int):
+        pila_tipos.append('int')
+    elif isinstance(p[1], float):
+        pila_tipos.append('float')     
 
 def p_empty(p):
     '''empty :'''
     pass
 
+#Funcion para instertar el cuadruplo en la lista de cuadruplos
+def insert_cuad(operador, op_izquierdo, op_derecho, result):
+    cuad.append([operador, op_izquierdo, op_derecho, result])
+    
 
-def p_read_exp(p):
-    'read_exp : '
+#Funcion para generar el cuadruplo
+def gen_cuad(op):
+    r_operand = pila_operandos.pop()
+    l_operand = pila_operandos.pop()
 
-def p_print_exp(p):
-    'print_exp : '
-
-#Punto neuralgico para el tipo de variable
-def p_assig_tipo_var(p):
-    'n_tipo_var : '
-    tipo_var
-    tipo_var = p[-1]
-
-#Punto neuralgico para agregar operadores a la pila de operadores
-def p_add_operador(p):
-    'add_operador : '
-    pila_operadores
-    pila_operadores.append(p[-1])
-
-#Punto neuralgico para agregar el operador de mas
-def p_add_operando_mas(p):
-    'add_operando_mas : '
-    #gen_quad(['+'])
-
-#Punto neuralgico para agregar el operador de menos
-def p_add_operando_menos(p):
-    'add_operando_menos : '
-    #gen_quad(['-'])
-
-#Punto neuralgico para agregar el operador de por
-def p_add_operando_producto(p):
-    'add_operando_producto : '
-    #gen_quad(['*'])
-
-
-#Punto neuralgico para agregar el operador de div
-def p_add_operando_div(p):
-    'add_operando_div : '
-    # gen_quad(['/'])
-
-
-#Punto neuralgico para agregar el operador de condicion
-def p_add_operando_condicion(p):
-    'add_operando_condicion : '
-   # gen_quad(['>', '<', '!=', '==','<=','>='])
-
-
-
-#Punto neuralgico para agregar el operador logico
-def p_add_operando_OR(p):
-    'add_operando_OR : '
-  #  gen_quad(['||'])
-
-def p_add_operando_AND(p):
-    'add_operando_AND : '
- #   gen_quad(['&&'])
-
-#Funcion para generacion de cuad
-def p_gen_quad(oper):
-    'gen_quad : '
-
-#Funcion para generar cuadruplo de asignacion
-def p_asig(p):
-    'asig : '
-
-
-
-
-#Puntos neuralgicos para los saltos
-#Punto neuralgico para verficiar la condicion del if
-def p_if_exp(p):
-    'if_exp : '
-
-#Punto neuralgico para el salto del else
-def p_else(p):
-    'else_exp : '
-
-#Punto neuralgico para exp del while
-def p_while_exp(p):
-    'while_exp : '
-
-
-#Punto neurlagico para el salto del return del while
-def p_return_while(p):
-    'return_while : '
-
-
-
-
+    #Verifico que la operacion sea valida en mi cubo semantico
+    result = f"temp{len(cuad)}" 
+    insert_cuad(op, l_operand, r_operand, result)
+    pila_operandos.append(result)
 
 
 parser = yacc.yacc()

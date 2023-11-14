@@ -8,6 +8,7 @@ reserved = {
     'int': 'INT',
     'float': 'FLOAT',
     'char': 'CHAR',
+    'bool' : 'BOOL',
     'if': 'IF',
     'else': 'ELSE',
     'while': 'WHILE',
@@ -24,7 +25,7 @@ reserved = {
 }
 
 #Defino mis tokens
-tokens = ['PROGRAM', 'VAR', 'INT', 'FLOAT', 'CHAR', 'CTEI', 'CTEF', 'CTESTRING', 'CTEC', 
+tokens = ['PROGRAM', 'VAR', 'INT', 'FLOAT', 'CHAR', 'BOOL', 'CTEI', 'CTEF', 'CTEB', 'CTESTRING', 'CTEC', 
           'ID', 'IF', 'ELSE', 'WHILE', 'MAYOR', 'FOR', 'MENOR', 'DIFF', 'MAS', 'MENOS', 'POR', 'DIV', 'MOD',
           'LLAVIZQ', 'VOID', 'LLAVDER', 'PARIZQ', 'PARDER', 'CORCHIZQ', 'CORCHDER', 'DOSPUN', 'PUNCOM', 
           'COMA', 'IGUAL', 'PRINT', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
@@ -52,6 +53,11 @@ def t_CTEF(t):
 def t_CTEC(t):
     r"'[a-zA-Z0-9]'"
     t.value = t.value[1]
+    return t
+
+def t_CTEB(t):
+    r'(True|False)'
+    t.value = bool(t.value)
     return t
 
 def t_CTESTRING(t):

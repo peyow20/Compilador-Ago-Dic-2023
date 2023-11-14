@@ -3,7 +3,6 @@ var
    x,y:int;
    z:float;
 
-
 func int Sumar(int a)
 var 
    e:int;
