@@ -2,9 +2,12 @@ program TestCorrect;
 var
    x,y:int;
    z:float;
+
 main()
 {
-   x = 1;
+   x = 3;
    y = 2;
-   z = x+y;
+   if (x == y) {
+      z = x/y+1;
+   };
 }

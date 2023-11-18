@@ -26,7 +26,7 @@ reserved = {
 
 #Defino mis tokens
 tokens = ['PROGRAM', 'VAR', 'INT', 'FLOAT', 'CHAR', 'BOOL', 'CTEI', 'CTEF', 'CTEB', 'CTESTRING', 'CTEC', 
-          'ID', 'IF', 'ELSE', 'WHILE', 'MAYOR', 'FOR', 'MENOR', 'DIFF', 'MAS', 'MENOS', 'POR', 'DIV', 'MOD',
+          'ID', 'IF', 'ELSE', 'WHILE', 'MAYOR', 'FOR', 'MENOR', 'DIFF','IGIG','MAYIG','MENIG', 'MAS', 'MENOS', 'POR', 'DIV', 'MOD',
           'LLAVIZQ', 'VOID', 'LLAVDER', 'PARIZQ', 'PARDER', 'CORCHIZQ', 'CORCHDER', 'DOSPUN', 'PUNCOM', 
           'COMA', 'IGUAL', 'PRINT', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
 
@@ -36,18 +36,18 @@ t_ignore = " \t"
 
 #Defino mis expresiones regulares que su simbolo o manera de usar varia
 def t_ID(t):
-    r'[A-za-z]+'
+    r'[A-Za-z][A-Za-z0-9_]*'
     t.type = reserved.get(t.value, 'ID')
+    return t
+
+def t_CTEF(t):
+    r'\d+\.\d+|\.\d+'
+    t.value = float(t.value)
     return t
 
 def t_CTEI(t):
     r'\d+'
     t.value = int(t.value)
-    return t
-
-def t_CTEF(t):
-    r'[0-9]*\.[0-9]+|[0-9]+'
-    t.value = float(t.value)
     return t
 
 def t_CTEC(t):
@@ -57,7 +57,7 @@ def t_CTEC(t):
 
 def t_CTEB(t):
     r'(True|False)'
-    t.value = bool(t.value)
+    t.value = True if t.value == 'True' else False
     return t
 
 def t_CTESTRING(t):
@@ -74,6 +74,17 @@ def t_OR(t):
     r'\|\|'
     return t
 
+def t_IGIG(t):
+    r'=='
+    return t
+
+def t_MAYIG(t):
+    r'>='
+    return t
+
+def t_MENIG(t):
+    r'<='
+    return t
 def t_MAYOR(t):
     r'\>'
     return t

@@ -3,7 +3,7 @@ var
    x,y:int;
    z:float;
 
-func int Sumar(int a)
+func int Sumar(int a, int b)
 var 
    e:int;
 {
@@ -12,6 +12,7 @@ var
     { 
     e = e+1;
     }
+   return
 }
 
 main()
