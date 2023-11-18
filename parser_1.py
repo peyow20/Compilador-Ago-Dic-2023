@@ -151,11 +151,15 @@ temporal_count = 0
 #Reglas sintacticas
 #Esta es la estructura que debe tener mi codigo
 def p_program(p):
-    '''program : PROGRAM ID PUNCOM VAR vars MAIN PARIZQ PARDER bloque'''
+    '''program : PROGRAM ID PUNCOM VAR vars main'''
     print(symbol_table)
     for cuadruplo in cuad:
         print(cuadruplo)
     p[0] = "ACC"
+
+
+def p_main(p):
+    '''main : MAIN PARIZQ PARDER bloque'''
 
 #def p_funcion(p):
  #    '''funcion : FUNC TIPO ID PARIZQ param PARDER vars_func bloque_func
@@ -288,61 +292,26 @@ def p_multiples_print(p):
 
 
 def p_condicion(p):
-    '''condicion : IF PARIZQ expresion PARDER bloque PUNCOM
-                 | IF PARIZQ expresion PARDER bloque ELSE bloque PUNCOM'''
-    
-    # Generación de cuádruplo GotoF
+    '''condicion : IF PARIZQ expresion PARDER verificar_if bloque verificar_bloque_if PUNCOM'''
+    # | IF PARIZQ expresion verificar_if PARDER bloque verificar_bloque_if ELSE bloque verificar_bloque_else'''
+
+def p_verificar_if(p):
+    '''verificar_if : '''
+    # Generar cuádruplo GotoF
     result_condicion = pila_operandos.pop()
-    cuad.append(('GotoF', result_condicion, '', '_'))
-    jump_position_if = len(cuad) - 1
+    jump_position_if = len(cuad)
+    cuad.append(('GotoF', result_condicion, '', jump_position_if))
     pila_saltos.append(jump_position_if)
 
-    # Generar cuádruplos para el bloque if
-    if len(p) == 9: 
-        # Cuádruplo GOTO para saltar sobre el bloque else
-        cuad.append(('GOTO', '', '', '_'))
-        jump_position_goto = len(cuad) - 1
-
-        # Identifico donde va el inicio del else
-        inicio_else = len(cuad)
-
-        # Rellenar GOTO con la dirección después del else
-        fin_else = len(cuad)
-        cuad[jump_position_goto] = (cuad[jump_position_goto][0], cuad[jump_position_goto][1], cuad[jump_position_goto][2], fin_else)
-
-        # Relleno GotoF con el inicio del bloque else
-        cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], inicio_else)
-
-    else:  # Solo estructura if
-        # Relleno el GotoF con la dirección después del if
-        fin_if = len(cuad)
-        cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], fin_if)
+def p_verificar_bloque_if(p):
+    '''verificar_bloque_if : '''
+    jump_position_if = pila_saltos.pop()
+    # Actualizar GotoF con la dirección después del if
+    cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
     
 
 def p_while_condicion(p):
     ''' while_condicion : WHILE PARIZQ expresion PARDER DO bloque'''
-
-    # Marcar el inicio de la condición del bucle while
-    inicio_while = len(cuad)
-    pila_saltos.append(inicio_while)
-
-
-    # Evaluo la expresión, genera el cuádruplo GotoF
-    exp_type = pila_tipos.pop()
-    #if exp_type != BOOL:
-     #   raise Exception("Error de tipo: Se esperaba una expresión booleana")
-
-    result_condicion = pila_operandos.pop()
-    cuad.append(('GotoF', result_condicion, '', '_'))
-    jump_position = len(cuad) - 1
-    pila_saltos.append(jump_position)
-
-    # Salto al inicio del bucle para reevaluar la condición
-    cuad.append(('GOTO', '', '', inicio_while))
-
-    # Rellenar el GotoF con la posición actual
-    end_while = pila_saltos.pop()  # Posición del GotoF
-    cuad[end_while] = (cuad[end_while][0], cuad[end_while][1], cuad[end_while][2], len(cuad))
 
 
 #def p_for_condicion(p):
