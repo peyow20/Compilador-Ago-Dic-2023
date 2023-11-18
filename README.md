@@ -14,3 +14,6 @@ Se hizo un cambio en la forma que se realizaran los puntos neuralgicos
 
 ## Avance 6
 Se agregaron y desarrollaron varios puntos neuralgicos y se empezo con la creacion de cuadruplos
+
+## Avance 7
+Se tienen ya cuadruplos de asignacion y en un 80% de expresiones
