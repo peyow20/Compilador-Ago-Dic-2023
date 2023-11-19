@@ -131,6 +131,11 @@ memory_counter = {
         INT: 6000,
         FLOAT: 7000,
         CHAR: 8000
+    },
+    'temporal': {
+        INT: 9000,
+        FLOAT: 10000,
+        CHAR: 11000
     }
 }
 
@@ -139,9 +144,11 @@ tipo_var = None
 
 
 param_table = []
+current_function = None
 
 #Estructura para Cuadruplos
 cuad = []
+
 pila_tipos = []
 pila_operadores = []
 pila_operandos = []
@@ -153,38 +160,96 @@ temporal_count = 0
 def p_program(p):
     '''program : PROGRAM ID PUNCOM VAR vars main'''
     print(symbol_table)
+    count = 0
     for cuadruplo in cuad:
-        print(cuadruplo)
+        print(count,cuadruplo)
+        count = count+1
     p[0] = "ACC"
 
 
 def p_main(p):
     '''main : MAIN PARIZQ PARDER bloque'''
 
-#def p_funcion(p):
- #    '''funcion : FUNC TIPO ID PARIZQ param PARDER vars_func bloque_func
-  #              | FUNC VOID ID PARIZQ param PARDER vars_func bloque_func'''
+def p_funcion(p):
+    '''funcion : FUNC TIPO insertar_nombre_funcion ID PARIZQ param PARDER VAR vars bloque RETURN exp fin_declaracion_funcion
+               | FUNC VOID insertar_nombre_funcion ID PARIZQ param PARDER VAR vars bloque RETURN fin_declaracion_funcion'''
 
-#def p_acum_func(p):
- #    '''acum_func : funcion acum_func
-  #                | empty'''
-     
-#def p_bloque_func(p):
- #    '''bloque_func : LLAVIZQ multiples_estatutos RETURN LLAVDER PUNCOM'''
+def p_param(p):
+    '''param : TIPO ID guardar_param COMA param
+             | TIPO ID guardar_param
+             | empty'''
+
+def p_insertar_nombre_funcion(p):
+    '''insertar_nombre_funcion : '''
+    function_name = p[-1]  # Nombre de la función
+    function_type = p[-2]  # Tipo de la función, 'void
+    if function_name not in symbol_table['global']['vars']:
+        symbol_table['global']['vars'][function_name] = {
+        'type': function_type,
+        'params': [],
+        'vars': {},
+        'start': len(cuad), # La posición del primer cuádruplo de la función
+        }
+# Cambiar el ámbito actual a local para la nueva función
+    memory_counter['current_scope'] = function_name
+    memory_counter[function_name] = {
+        'INT': 3000,
+        'FLOAT': 4000,
+        'CHAR': 5000,
+        }
 
 
-#def p_param(p):
- #    '''param : TIPO ID COMA param
-  #            | TIPO ID'''
-     
-#def p_var_func(p):
- #   '''var_func : id_lista_func DOSPUN TIPO PUNCOM vars_func
-  #              | empty'''
+def p_guardar_param(p):
+    '''guardar_param : '''
+    global current_function, memory_counter, symbol_table
 
-#def p_id_list_func(p):
- #   '''id_list_func : ID COMA id_lista_func
-  #                  | ID'''
-     
+    param_name = p[-1]  # Nombre del parámetro
+    param_type = p[-2]  # Tipo del parámetro
+    function_scope = current_function  # El alcance es el nombre de la función actual
+
+    # Asignar dirección de memoria basada en el tipo y el alcance
+    param_address = memory_counter['local'][param_type]
+    memory_counter['local'][param_type] += 1  # Incrementar el contador para el siguiente parámetro
+
+    # Insertar parámetro en la tabla de símbolos de la función
+    if function_scope not in symbol_table:
+        symbol_table[function_scope] = {'vars': {}, 'type': None, 'params': []}
+
+    symbol_table[function_scope]['vars'][param_name] = {
+        'type': param_type,
+        'address': param_address
+    }
+    
+    # Agregar parámetro a la lista de parámetros de la función
+    symbol_table[function_scope]['params'].append(param_name)
+
+def p_fin_declaracion_funcion(p):
+    '''fin_declaracion_funcion : '''
+    function_name = memory_counter['current_scope'] # Nombre de la función actual
+# Generar el cuádruplo para el final de la función
+    cuad.append(('ENDFunc', '', '', ''))
+
+# Actualizar la tabla de funciones con la cantidad de memoria para variables locales y temporales
+
+    local_size = sum(memory_counter[function_name].values())
+    symbol_table['global']['vars'][function_name]['size'] = local_size
+# Restablecer el ámbito actual a global después de terminar la función
+    memory_counter['current_scope'] = 'global'
+
+def p_acum_func(p):
+     '''acum_func : funcion acum_func
+                  | empty'''
+
+def p_param(p):
+    '''param : TIPO ID COMA param
+             | TIPO ID
+             | empty'''
+
+
+
+
+
+
 #En las siguiente 4 reglas me ayudan a construir el area de las variables
 #tanto como los distintos tipos(en este caso solo int y float) como la cantidad
 
@@ -292,26 +357,11 @@ def p_multiples_print(p):
 
 
 def p_condicion(p):
-    '''condicion : IF PARIZQ expresion PARDER verificar_if bloque verificar_bloque_if PUNCOM'''
-    # | IF PARIZQ expresion verificar_if PARDER bloque verificar_bloque_if ELSE bloque verificar_bloque_else'''
-
-def p_verificar_if(p):
-    '''verificar_if : '''
-    # Generar cuádruplo GotoF
-    result_condicion = pila_operandos.pop()
-    jump_position_if = len(cuad)
-    cuad.append(('GotoF', result_condicion, '', jump_position_if))
-    pila_saltos.append(jump_position_if)
-
-def p_verificar_bloque_if(p):
-    '''verificar_bloque_if : '''
-    jump_position_if = pila_saltos.pop()
-    # Actualizar GotoF con la dirección después del if
-    cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
-    
+    '''condicion : IF PARIZQ expresion PARDER verificar_if bloque verificar_bloque_if PUNCOM
+                 | IF PARIZQ expresion PARDER verificar_if bloque ELSE verificar_bloque_else bloque verificar_bloque_if PUNCOM'''
 
 def p_while_condicion(p):
-    ''' while_condicion : WHILE PARIZQ expresion PARDER DO bloque'''
+    '''while_condicion : WHILE PARIZQ guardar_posicion_while expresion verificar_expresion_while PARDER DO bloque llenar_cuadruplo_while'''
 
 
 #def p_for_condicion(p):
@@ -460,6 +510,66 @@ def generate_temporal():
     temporal_name = f"t{temporal_count}"
     temporal_count += 1
     return temporal_name
+
+
+###PUNTOS NEURLAGICOS 
+
+#IF
+def p_verificar_if(p):
+    '''verificar_if : '''
+    global cuad, pila_saltos, pila_operandos
+    result_condicion = pila_operandos.pop()
+    cuad.append(('GotoF', result_condicion, '', None))  # Se deja el lugar de salto como None
+    jump_position_if = len(cuad) - 1
+    pila_saltos.append(jump_position_if)
+    print(jump_position_if)
+
+def p_verificar_bloque_if(p):
+    '''verificar_bloque_if : '''
+    global cuad, pila_saltos
+    jump_position_if = pila_saltos.pop()
+    if len(p) == 8:  # Corresponde a la regla de producción de if-else
+        cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
+    else:  # Solo if
+        cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
+
+def p_verificar_bloque_else(p):
+    '''verificar_bloque_else : '''
+    global pila_saltos
+    cuad.append(('GOTO', '', '', None))  # Cuádruplo de salto para el ELSE
+    jump_position_goto = len(cuad) - 1
+    pila_saltos.append(jump_position_goto)
+    cuad[jump_position_goto] = (cuad[jump_position_goto][0], cuad[jump_position_goto][1], cuad[jump_position_goto][2], len(cuad))
+
+
+
+#WHILE 
+def p_guardar_posicion_while(p):
+    '''guardar_posicion_while : '''
+    global pila_saltos, cuad
+    pila_saltos.append(len(cuad))
+
+def p_verificar_expresion_while(p):
+    '''verificar_expresion_while : '''
+    global pila_tipos, pila_operandos, cuad, pila_saltos
+    exp_type = pila_tipos.pop()
+    if exp_type != BOOL:
+        raise Exception("Error de tipo: Se esperaba una expresión booleana")
+    else:
+        result = pila_operandos.pop()
+        cuad.append(('GotoF', result, '', None))
+        pila_saltos.append(len(cuad) - 1)
+
+def p_llenar_cuadruplo_while(p):
+    '''llenar_cuadruplo_while : '''
+    global pila_saltos, cuad
+    inicio_while = pila_saltos.pop(-2)
+    goto_f_position = pila_saltos.pop()
+    cuad.append(('GOTO', '', '', inicio_while))
+    cuad[goto_f_position] = (cuad[goto_f_position][0], cuad[goto_f_position][1], cuad[goto_f_position][2], len(cuad))
+
+
+
 
 
 parser = yacc.yacc()
