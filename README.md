@@ -17,3 +17,6 @@ Se agregaron y desarrollaron varios puntos neuralgicos y se empezo con la creaci
 
 ## Avance 7
 Se tienen ya cuadruplos de asignacion y en un 80% de expresiones
+
+## Avance 8
+Se estan terminando funciones con su direccionamiento adecuado
