@@ -427,10 +427,6 @@ def p_var_cte(p):
                | CTEB'''
     #Identifico las constantes aceptadas por el compilador
     pila_operandos.append(p[1])
-    
-    # Aquí debes verificar en qué ámbito (scope) estás actualmente trabajando
-    # Por ejemplo, si estás en una función, deberías buscar la variable en el espacio de esa función
-    # Si no estás en una función, deberías buscar en el espacio global
     current_scope = "global"  # o el nombre de la función actual si estás dentro de una
     if p[1] in symbol_table[current_scope]['vars']:
         pila_tipos.append(symbol_table[current_scope]['vars'][p[1]]['type'])
