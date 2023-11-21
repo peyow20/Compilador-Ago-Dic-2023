@@ -1,18 +1,7 @@
 from lexer import tokens
 import ply.yacc as yacc
+from pprint import pprint
 
-
-
-#Direcciones de memoria
-global_int = 0
-global_float = 1000
-global_char = 2000
-local_int = 3000
-local_float = 4000
-local_char = 5000
-constante_int = 6000
-constante_float = 7000
-constante_char = 8000
 
     
 BOOL = 'bool'
@@ -115,7 +104,7 @@ symbol_table = {
 }
 
 
-
+#Direcciones de memoria
 memory_counter = {
     'global': {
         INT: 0,
@@ -140,9 +129,6 @@ memory_counter = {
 }
 
 
-tipo_var = None
-
-
 param_table = []
 current_function = None
 
@@ -158,7 +144,7 @@ temporal_count = 0
 #Reglas sintacticas
 #Esta es la estructura que debe tener mi codigo
 def p_program(p):
-    '''program : PROGRAM ID PUNCOM VAR vars main'''
+    '''program : PROGRAM ID PUNCOM VAR vars acum_func main'''
     print(symbol_table)
     count = 0
     for cuadruplo in cuad:
@@ -169,6 +155,7 @@ def p_program(p):
 
 def p_main(p):
     '''main : MAIN PARIZQ PARDER bloque'''
+
 
 def p_funcion(p):
     '''funcion : FUNC TIPO insertar_nombre_funcion ID PARIZQ param PARDER VAR vars bloque RETURN exp fin_declaracion_funcion
@@ -229,7 +216,7 @@ def p_fin_declaracion_funcion(p):
 # Generar el cuádruplo para el final de la función
     cuad.append(('ENDFunc', '', '', ''))
 
-# Actualizar la tabla de funciones con la cantidad de memoria para variables locales y temporales
+# Se actualizar la tabla de funciones con la cantidad de memoria para variables locales y temporales
 
     local_size = sum(memory_counter[function_name].values())
     symbol_table['global']['vars'][function_name]['size'] = local_size
@@ -240,22 +227,13 @@ def p_acum_func(p):
      '''acum_func : funcion acum_func
                   | empty'''
 
-def p_param(p):
-    '''param : TIPO ID COMA param
-             | TIPO ID
-             | empty'''
-
-
-
-
-
-
 #En las siguiente 4 reglas me ayudan a construir el area de las variables
 #tanto como los distintos tipos(en este caso solo int y float) como la cantidad
 
 def p_id_lista(p):
     '''id_lista : ID COMA id_lista
-               | ID'''
+               | ID
+               | arreglo'''
     if len(p) == 4: 
         p[0] = [p[1]] + p[3]
     else: 
@@ -291,8 +269,8 @@ def p_TIPO(p):
     #Identifico los tipos de variables
     p[0] = p[1]
 
-#def p_arreglo(p):
-#    '''arreglo : ARR LLAVIZQ CTEI LLAVDER'''
+def p_arreglo(p):
+   '''arreglo : ARR LLAVIZQ CTEI LLAVDER'''
 
 #Esta regla establece la semantica de un bloque de codigo
 def p_bloque(p):
@@ -332,6 +310,7 @@ def p_asignacion(p):
 
         # Verificar compatibilidad
         if expr_type == var_type or (var_type == FLOAT and expr_type == INT):
+            #Genero el cuadruplo de asignacion
             operando_izq = p[1]
             operando_der = pila_operandos.pop()
             cuadruplo_asignacion = ('=', operando_der, '', operando_izq)
@@ -355,13 +334,6 @@ def p_multiples_print(p):
     '''multiples_print : COMA  print_expresion
                  | empty'''
 
-
-def p_condicion(p):
-    '''condicion : IF PARIZQ expresion PARDER verificar_if bloque verificar_bloque_if PUNCOM
-                 | IF PARIZQ expresion PARDER verificar_if bloque ELSE verificar_bloque_else bloque verificar_bloque_if PUNCOM'''
-
-def p_while_condicion(p):
-    '''while_condicion : WHILE PARIZQ guardar_posicion_while expresion verificar_expresion_while PARDER DO bloque llenar_cuadruplo_while'''
 
 
 #def p_for_condicion(p):
@@ -515,44 +487,61 @@ def generate_temporal():
 ###PUNTOS NEURLAGICOS 
 
 #IF
+def p_condicion(p):
+    '''condicion : IF PARIZQ expresion PARDER verificar_if bloque verificar_bloque_if PUNCOM
+                 | IF PARIZQ expresion PARDER verificar_if bloque verificar_bloque_else ELSE bloque verificar_bloque_if PUNCOM'''
+    
+
+
+
 def p_verificar_if(p):
     '''verificar_if : '''
     global cuad, pila_saltos, pila_operandos
     result_condicion = pila_operandos.pop()
-    cuad.append(('GotoF', result_condicion, '', None))  # Se deja el lugar de salto como None
+    cuad.append(('GotoF', result_condicion, '', None))  # Se deja el lugar de salto como None para luego actualizarlo
     jump_position_if = len(cuad) - 1
     pila_saltos.append(jump_position_if)
-    print(jump_position_if)
+
 
 def p_verificar_bloque_if(p):
     '''verificar_bloque_if : '''
     global cuad, pila_saltos
-    jump_position_if = pila_saltos.pop()
-    if len(p) == 8:  # Corresponde a la regla de producción de if-else
+    if len(p) == 1:  # Corresponde a la regla de producción de if-else y actualiza el salto del goto
+        jump_position_else = pila_saltos.pop()
+        cuad[jump_position_else] = (cuad[jump_position_else][0], cuad[jump_position_else][1], cuad[jump_position_else][2], len(cuad))
+
+    else:  # Solo if y actualiza su salto
+        jump_position_if = pila_saltos.pop()
         cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
-    else:  # Solo if
-        cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
+
 
 def p_verificar_bloque_else(p):
     '''verificar_bloque_else : '''
     global pila_saltos
+    jump_position_if = pila_saltos.pop()
     cuad.append(('GOTO', '', '', None))  # Cuádruplo de salto para el ELSE
     jump_position_goto = len(cuad) - 1
     pila_saltos.append(jump_position_goto)
-    cuad[jump_position_goto] = (cuad[jump_position_goto][0], cuad[jump_position_goto][1], cuad[jump_position_goto][2], len(cuad))
+    #Actualizo el salto del gotof
+    cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
 
+#WHILE
 
-
-#WHILE 
+def p_while_condicion(p):
+    '''while_condicion : WHILE PARIZQ guardar_posicion_while expresion verificar_expresion_while PARDER DO bloque llenar_cuadruplo_while'''
+    
+     
 def p_guardar_posicion_while(p):
     '''guardar_posicion_while : '''
     global pila_saltos, cuad
+    #Guardo en que posicion esta el while en los cuadruplos para el goto
     pila_saltos.append(len(cuad))
 
 def p_verificar_expresion_while(p):
     '''verificar_expresion_while : '''
     global pila_tipos, pila_operandos, cuad, pila_saltos
     exp_type = pila_tipos.pop()
+    #Verifico que sea el tipo de dato correcto
     if exp_type != BOOL:
         raise Exception("Error de tipo: Se esperaba una expresión booleana")
     else:
@@ -563,9 +552,11 @@ def p_verificar_expresion_while(p):
 def p_llenar_cuadruplo_while(p):
     '''llenar_cuadruplo_while : '''
     global pila_saltos, cuad
+    #Le hago pop a el salto del gotof
     inicio_while = pila_saltos.pop(-2)
     goto_f_position = pila_saltos.pop()
     cuad.append(('GOTO', '', '', inicio_while))
+    #Actualizo el salto del gotof del while
     cuad[goto_f_position] = (cuad[goto_f_position][0], cuad[goto_f_position][1], cuad[goto_f_position][2], len(cuad))
 
 

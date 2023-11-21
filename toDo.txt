@@ -1,0 +1,11 @@
+IF
+    if -> ( -> condition -> PUNTO_UNO -> ) -> { -> bloque -> } -> else 
+
+ELSE
+  else -> PUNTO_TRES ->{ ->  bloqeu -> } PUNTO_CUATRO
+    | null -> PUNTO_DOS
+
+
+PUNTO_UNO = GUARADS CUADR EN PILA SALTOS
+PUNTO_DOS = POP PILA SALTOS Y GUARDAR EN VAR varSalto, QUADRUPLO SIG GUARADR VAR varSig,  EN QUADRUPLO[varSalto] = [IGUAL, IGUAL, IGUAL, varSig] 
+PUTNO_TRES = POP PILA SALTOS Y GUARDAR EN VAR varSalto, QUADRUPLO SIG GUARADR VAR varSig,  EN QUADRUPLO[varSalto] = [IGUAL, IGUAL, IGUAL, varSig] 

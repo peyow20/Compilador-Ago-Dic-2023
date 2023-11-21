@@ -3,13 +3,43 @@ var
    x,y:int;
    z:float;
 
+func int Sumar(int a, int b)
+var 
+   e:int;
+{
+    e = 8;
+    while (e > 0) do
+    { 
+    e = e+1;
+    }
+}
+   return e
+
+func int resta(int a, int b)
+var 
+   e:int;
+{
+    e = 8;
+    while (e > 0) do
+    { 
+    e = e+1;
+    }
+}
+   return e
+
+
 main()
 {
    x = 3;
    y = 2;
    if (x > y) {
-      z = x-y; 
+      z = (x*y)-3/4; 
    }else{ 
+      if(x<y){
+         while (x<y) do{
+            x=x+1;
+         }
+      };
     z = x+y;
     };
 }
