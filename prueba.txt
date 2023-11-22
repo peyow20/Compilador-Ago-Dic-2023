@@ -2,38 +2,19 @@ program TestCorrect;
 var
    x,y:int;
    z:float;
+   i,w:bool;
+   a,b:char;
 
-func int Sumar(int a, int b)
-var 
-   e:int;
-{
-    e = 8;
-    while (e > 0) do
-    { 
-    e = e+1;
-    }
-}
-   return e
-
-func int resta(int a, int b)
-var 
-   e:int;
-{
-    e = 8;
-    while (e > 0) do
-    { 
-    e = e+1;
-    }
-}
-   return e
 
 
 main()
 {
    x = 3;
    y = 2;
-   if (x > y) {
-      z = (x*y)-3/4; 
+   i= true;
+   w = false;
+   if (w > i) {
+      write("hola mundo",(x+y));
    }else{ 
       if(x<y){
          while (x<y) do{

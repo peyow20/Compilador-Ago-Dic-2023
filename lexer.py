@@ -13,7 +13,7 @@ reserved = {
     'else': 'ELSE',
     'while': 'WHILE',
     'for': 'FOR',
-    'print': 'PRINT',
+    'write': 'WRITE',
     'arr' : 'ARR',
     'func' : 'FUNC',
     'void' : 'VOID',
@@ -21,14 +21,13 @@ reserved = {
     'do' : 'DO',
     'return' : 'RETURN',
     'main' : 'MAIN',
-    'arr' : 'ARR',
 }
 
 #Defino mis tokens
 tokens = ['PROGRAM', 'VAR', 'INT', 'FLOAT', 'CHAR', 'BOOL', 'CTEI', 'CTEF', 'CTEB', 'CTESTRING', 'CTEC', 
           'ID', 'IF', 'ELSE', 'WHILE', 'MAYOR', 'FOR', 'MENOR', 'DIFF','IGIG','MAYIG','MENIG', 'MAS', 'MENOS', 'POR', 'DIV', 'MOD',
           'LLAVIZQ', 'VOID', 'LLAVDER', 'PARIZQ', 'PARDER', 'CORCHIZQ', 'CORCHDER', 'DOSPUN', 'PUNCOM', 
-          'COMA', 'IGUAL', 'PRINT', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
+          'COMA', 'IGUAL', 'WRITE', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
 
 
 t_ignore = " \t"
