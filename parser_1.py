@@ -440,11 +440,18 @@ def p_var_cte(p):
                | CTEC
                | CTEB'''
     #Identifico las constantes aceptadas por el compilador
+    pila_operandos.append(p[1])
     
-    if isinstance(p[1], str) and p[1] in symbol_table['vars']:
-        var_info = symbol_table['vars'][p[1]]
-        pila_operandos.append(var_info['address'])  # Dirección de memoria de la variable
-        pila_tipos.append(var_info['type'])  # Tipo de la variable
+    # Aquí debes verificar en qué ámbito (scope) estás actualmente trabajando
+    # Por ejemplo, si estás en una función, deberías buscar la variable en el espacio de esa función
+    # Si no estás en una función, deberías buscar en el espacio global
+    current_scope = "global"  # o el nombre de la función actual si estás dentro de una
+    if p[1] in symbol_table[current_scope]['vars']:
+        pila_tipos.append(symbol_table[current_scope]['vars'][p[1]]['type'])
+    elif isinstance(p[1], int):
+        pila_tipos.append('int')
+    elif isinstance(p[1], float):
+        pila_tipos.append('float')
     else:
         # Si es una constante, asigna una dirección de memoria y empuja esa dirección y su tipo a la pila.
         const_address = assign_constant_memory(p[1])  # Obtiene o asigna una dirección para la constante
