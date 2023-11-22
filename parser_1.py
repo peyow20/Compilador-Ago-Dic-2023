@@ -108,7 +108,7 @@ constante_float = 9000
 constante_char = 10000
 constante_bool = 11000 
 
-# Limites de memoria para cada tipo
+# Limites de memoria 
 MAX_GLOBAL_INT = 1000
 MAX_GLOBAL_FLOAT = 2000
 MAX_GLOBAL_CHAR = 3000
@@ -122,7 +122,7 @@ MAX_CONSTANT_FLOAT = 10000
 MAX_CONSTANT_CHAR = 11000
 MAX_CONSTANT_BOOL = 12000
 
-# Contadores de memoria para cada tipo
+# Contador para controlar el almacenamiento
 current_global_int_address = global_int
 current_global_float_address = global_float
 current_global_char_address = global_char
@@ -136,16 +136,22 @@ current_constant_float_address = constante_float
 current_constant_char_address = constante_char
 current_constant_bool_address = constante_bool
 
+directorio_funciones = {
+    'global': {
+        'tipo': 'void',  # Tipo de retorno defaul
+        'vars': {},  # Aquí almaceno variable
+        'params': []  # Parametros (por si se ocupan)
+    }
+}
 
 
-symbol_table = {}
 param_table = []
 tabla_cte = {} 
-current_function = None
+current_function = 'global'
 
 #Estructura para Cuadruplos
 cuad = []  # Para cuádruplos con direcciones
-cuad_literales = []  # Para cuádruplos con nombres de variables o valores literales
+cuad_literales = []  # Para cuádruplos con nombres de variables
 
 
 pila_tipos = []
@@ -154,12 +160,17 @@ pila_operandos = []
 pila_saltos = []
 temporal_count = 0
 
-#Reglas sintacticas
+
+#Reglas sintacticas con semantica
 #Esta es la estructura que debe tener mi codigo
 def p_program(p):
     '''program : PROGRAM ID PUNCOM VAR vars acum_func main'''
-
-    print(symbol_table)
+    global current_function, cuad
+    func_name = p[3]
+    current_function = func_name
+    #Se imprime los resultados obtenidos
+    imprimir_directorio_funciones(directorio_funciones)
+    print(param_table)
     count = 0
     print("/////Cuadruplos con direcciones////")
     for cuadruplo in cuad:
@@ -184,20 +195,120 @@ def p_main(p):
 
 
 def p_funcion(p):
-    '''funcion : FUNC TIPO ID PARIZQ param PARDER VAR vars bloque RETURN exp PUNCOM
-               | FUNC VOID ID PARIZQ param PARDER VAR vars bloque RETURN PUNCOM'''
+    '''funcion : FUNC TIPO ID save_type_name_func PARIZQ param PARDER save_params vars_local bloque_func RETURN exp PUNCOM end_function
+               | FUNC VOID ID save_type_name_func PARIZQ param PARDER save_params vars_local bloque_func RETURN PUNCOM end_function'''
+
+def p_save_type__name_func(p):
+    '''save_type_name_func : '''
+    global current_function
+
+    current_name = p[-1]  # Identifico el nombre de la funcion
+    current_type = p[-2]  # Identifico el tipo de la funcion
+
+    #Verifico que no haya una funcion llamada igual
+    if current_name in directorio_funciones:
+        raise Exception(f"La función '{current_name}' ya está declarada.")
+    else:
+        # Inserta la función en el directorio de funciones
+        directorio_funciones[current_name] = {
+            'tipo': current_type if current_type != 'VOID' else 'void',
+            'vars': {},
+            'params': [],
+            'quad_start': None  # Aqui inicia la funcion
+        }
+    # La current_function pasa a llamarse como la funcion
+    current_function = current_name
+    p[0] = current_name 
+
+
+def p_save_params(p):
+    '''save_params : '''
+    global current_function, directorio_funciones
+    #Primero almaceno los parametros 
+    params = p[-2] 
+    #Verifico que no este en la funcion global(la cual es la "main")
+    if current_function != 'global':
+        param_count = 0
+        for param_type, param_name in params:
+            # Inserto los parámetros en la tabla de variables de la función y le asigno memoria
+            address = assign_local_memory(param_type)
+            directorio_funciones[current_function]['vars'][param_name] = {
+                'type': param_type,
+                'address': address
+            }
+            # Inserto los parámetros en la tabla de parámetros
+            directorio_funciones[current_function]['params'].append((param_name, param_type))
+            param_count += 1
+        # Insert0 el número de parámetros en la tabla de símbolos de la función
+        directorio_funciones[current_function]['param_count'] = param_count
+    else:
+        raise Exception("Error: intentando agregar parámetros fuera del contexto de una función")
+
+def p_vars_local(p):
+    '''vars_local : VAR vars'''
+    global current_function, directorio_funciones
+    local_vars = p[2]
+    #Verifico que no este en el main
+    if current_function != 'global' and local_vars is not None:
+        #Le asigno su direccion de memoria a las variables locales de la funcion
+        for var_name, var_type in local_vars:
+            address = assign_local_memory(var_type)
+            directorio_funciones[current_function]['vars'][var_name] = {
+                'type': var_type,
+                'address': address
+            }
+    elif current_function == 'global':
+        raise Exception("Error: Declaracion de variables locales en contexto global.")
+    
+def p_bloque_func(p):
+    '''bloque_func : bloque'''
+    global cuad, directorio_funciones, current_function
+    
+    if current_function != 'global':
+        start_quad = len(cuad)  # Esto captura el índice del próximo cuádruplo a generar
+        directorio_funciones[current_function]['start_quad'] = start_quad
+    else:
+        raise Exception("Error: No se pueden asignar el inicio del cuadurplo de contexto global")    
+    
+
+def p_end_function(p):
+    '''end_function : '''
+    global directorio_funciones, current_function, temporal_count
+
+    # Libera la tabla de variables locales (VarTable) para la función actual
+    #if current_function in directorio_funciones and current_function != 'global':
+     #   directorio_funciones[current_function]['vars'] = {}
+        #Se genera el cuadruplo de fin de funcion
+    cuad.append(('ENDFunc', '', '', ''))
+
+    # Aqui le asigno el numero de variables temporales usadas
+    directorio_funciones[current_function]['temporals_used'] = temporal_count
+    # Reseteo el contador de variables temporales
+    temporal_count = 0
+    # Me regreso al contexto global ("main")
+    current_function = 'global'
 
 def p_param(p):
     '''param : TIPO ID COMA param
-             | TIPO ID 
-             | empty'''
+             | TIPO ID'''
+    if len(p) == 3:
+        # Solo tiene un parametro
+        p[0] = [(p[1], p[2])]
+    else:
+        # Hay mas parametros
+        p[0] = [(p[1], p[2])] + p[4]
 
-
+#En caso de que no haya parametros
+def p_param_empty(p):
+    '''param : empty'''
+    p[0] = []
 
 def p_acum_func(p):
      '''acum_func : funcion acum_func
                   | empty'''
      
+
+
 
 def p_llamada_funcion(p):
     '''llamada_funcion : ID PARIZQ argumentos_llamada PARDER'''
@@ -209,7 +320,7 @@ def p_argumentos_llamada(p):
 
 
 #En las siguiente 4 reglas me ayudan a construir el area de las variables
-#tanto como los distintos tipos(en este caso solo int y float) como la cantidad
+#tanto como los distintos tipos(en este caso solo int, float, char, bool) como la cantidad
 
 def p_id_lista(p):
     '''id_lista : ID COMA id_lista
@@ -223,25 +334,28 @@ def p_id_lista(p):
 def handle_vars(p):
     var_type = p[3]
     id_list = p[1]
-    if 'vars' not in symbol_table:
-        symbol_table['vars'] = {}
-    
-    for var_id in id_list:
-        address = assign_global_memory(var_type)  # Obtiene la dirección de memoria para la variable
-        # Guarda en la tabla de símbolos tanto el tipo como la dirección de memoria
-        symbol_table['vars'][var_id] = {
-            'type': var_type,
-            'address': address
-        }
+
+    global current_function
+    if current_function == 'global':
+        handle_global_vars(id_list, var_type)
+    else:
+        handle_local_vars(current_function, id_list, var_type)
     p[0] = p[5]
+
 
 def p_vars(p):
     '''vars : id_lista DOSPUN TIPO PUNCOM vars
             | empty'''
     if len(p) == 6:
-        handle_vars(p)
-    elif len(p) == 2:
-        p[0] = None
+        global current_function
+        var_type = p[3]
+        id_list = p[1]
+        if current_function != 'global':
+            # Aquí manejas las variables como locales
+            handle_local_vars(current_function, id_list, var_type)
+        else:
+            # Manejo de variables globales
+            handle_global_vars(id_list, var_type)
 
 #Esta regla define los tipos de variables que 
 def p_TIPO(p):
@@ -252,8 +366,8 @@ def p_TIPO(p):
     #Identifico los tipos de variables
     p[0] = p[1]
 
-def p_arreglo(p):
-   '''arreglo : ARR LLAVIZQ CTEI LLAVDER'''
+#def p_arreglo(p):
+ #  '''arreglo : ARR LLAVIZQ CTEI LLAVDER'''
 
 #Esta regla establece la semantica de un bloque de codigo
 def p_bloque(p):
@@ -282,9 +396,11 @@ def p_asignacion(p):
     '''asignacion : ID IGUAL expresion PUNCOM'''
     var_name = p[1]  # Nombre de la variable a la que se asigna
 
-    if var_name in symbol_table['vars']:
-        var_type = symbol_table['vars'][var_name]['type']
-        var_address = symbol_table['vars'][var_name]['address']  # Dirección de la variable
+    # Buscar la variable en el directorio de funciones bajo el contexto actual
+    func_context = directorio_funciones[current_function if current_function in directorio_funciones else 'global']
+    if var_name in func_context['vars']:
+        var_type = func_context['vars'][var_name]['type']
+        var_address = func_context['vars'][var_name]['address']
 
         if len(pila_tipos) > 0:
             expr_type = pila_tipos.pop()
@@ -302,20 +418,10 @@ def p_asignacion(p):
             cuad.append(cuadruplo_asignacion)
 
             # Cuádruplo con nombres de variables o valores literales
-            cuadruplo_asignacion_literal = ('=', get_literal_or_name(operando_der), '', operando_izq_literal)
-            cuad_literales.append(cuadruplo_asignacion_literal)
         else:
             raise Exception(f"Tipo no compatible en la asignación a '{var_name}'")
     else:
         raise Exception(f"Variable no declarada: {var_name}")
-
-def get_literal_or_name(operand):
-    if operand in symbol_table['vars']:
-        # Si el operando es una variable, devuelve su nombre
-        return symbol_table['vars'][operand]['name'] 
-    else:
-        # Si es un valor literal o un temporal, devuelve el operando tal cual
-        return operand
 
 def p_escritura(p):
     '''escritura : WRITE PARIZQ print_expresion PARDER PUNCOM'''
@@ -326,7 +432,7 @@ def p_print_expresion(p):
                        | CTESTRING multiples_print'''
     if len(p) == 3:
         if isinstance(p[1], str):
-            # Si es una constante string, se imprime directamente
+            # Es una constante string, imprímela directamente
             cuad.append(('write', p[1], '', ''))
         else:
             # Es una expresión, el resultado está en la cima de la pila de operandos
@@ -343,7 +449,7 @@ def p_condicion(p):
                  | IF PARIZQ expresion PARDER verificar_if bloque verificar_bloque_else ELSE bloque verificar_bloque_if PUNCOM'''
 
 def p_while_condicion(p):
-    '''while_condicion : WHILE PARIZQ guardar_posicion_while expresion verificar_expresion_while PARDER DO bloque llenar_cuadruplo_while'''
+    '''while_condicion : WHILE PARIZQ save_position_while expresion check_while_exp PARDER DO bloque fill_jump_while'''
     
 
 #def p_for_condicion(p):
@@ -372,8 +478,9 @@ def p_expresion(p):
         right_operand = pila_operandos.pop()  # Extrae primero el operando derecho
         left_operand = pila_operandos.pop()  # Luego el operando izquierdo
         
-        right_type = pila_tipos.pop() 
-        left_type = pila_tipos.pop()  
+        right_type = pila_tipos.pop()  # Asumiendo que aquí se extrae un string que indica el tipo
+        left_type = pila_tipos.pop()  # Asumiendo que aquí también se extrae un string que indica el tipo
+
         operator = p[2]  # El operador de comparación
 
         if isinstance(right_type, dict) or isinstance(left_type, dict):
@@ -440,30 +547,24 @@ def p_var_cte(p):
                | CTEC
                | CTEB'''
     #Identifico las constantes aceptadas por el compilador
-    pila_operandos.append(p[1])
     
-    # Aquí debes verificar en qué ámbito (scope) estás actualmente trabajando
-    # Por ejemplo, si estás en una función, deberías buscar la variable en el espacio de esa función
-    # Si no estás en una función, deberías buscar en el espacio global
-    current_scope = "global"  # o el nombre de la función actual si estás dentro de una
-    if p[1] in symbol_table[current_scope]['vars']:
-        pila_tipos.append(symbol_table[current_scope]['vars'][p[1]]['type'])
-    elif isinstance(p[1], int):
-        pila_tipos.append('int')
-    elif isinstance(p[1], float):
-        pila_tipos.append('float')
+    scope = directorio_funciones[current_function] if current_function else directorio_funciones['global']
+    if isinstance(p[1], str) and p[1] in scope['vars']:
+        var_info = scope['vars'][p[1]]
+        pila_operandos.append(var_info['address'])
+        pila_tipos.append(var_info['type'])
     else:
         # Si es una constante, asigna una dirección de memoria y empuja esa dirección y su tipo a la pila.
         const_address = assign_constant_memory(p[1])  # Obtiene o asigna una dirección para la constante
         pila_operandos.append(const_address)  # Dirección de memoria de la constante
         if isinstance(p[1], int):
-            pila_tipos.append('int')  # Empuja 'int' para constantes enteras
+            pila_tipos.append('int')  # Empujo 'int' para constantes enteras
         elif isinstance(p[1], float):
-            pila_tipos.append('float')  # Empuja 'float' para constantes flotantes
+            pila_tipos.append('float')  # Empujo 'float' para constantes flotantes
         elif isinstance(p[1], str) and len(p[1]) == 1:
-            pila_tipos.append('char')  # Empuja 'char' para constantes de caracter
+            pila_tipos.append('char')  # Empujo 'char' para constantes de caracter
         elif isinstance(p[1], str) and p[1] in ['true', 'false']:
-            pila_tipos.append('bool')  # Empuja 'bool' para constantes booleanas
+            pila_tipos.append('bool')  # Empujo 'bool' para constantes booleanas
 
 
 def p_error(p):
@@ -474,41 +575,8 @@ def p_empty(p):
     pass
 
 
-def check_for_quad_generation():
-    if len(pila_operadores) > 0:
-        # Verificar la precedencia del operador
-        top_operator = pila_operadores[-1]
-        if top_operator in ['+', '-', '*', '/']:
-            # Implementa aquí la lógica para generar cuádruplos
-            generate_quad()
 
-
-def generate_quad():
-    right_operand = pila_operandos.pop()
-    right_type = pila_tipos.pop()
-    left_operand = pila_operandos.pop()
-    left_type = pila_tipos.pop()
-    operator = pila_operadores.pop()
-
-    result_type = validate_operation(left_type, right_type, operator)
-    if result_type != 'ERROR':
-        result = generate_temporal()
-        cuad.append((operator, left_operand, right_operand, result))
-        pila_operandos.append(result)
-        pila_tipos.append(result_type)
-    else:
-        print(f"Error de tipo en la operación: {left_type} {operator} {right_type}")
-
-
-def generate_temporal():
-    global temporal_count
-    temporal_name = f"t{temporal_count}"
-    temporal_count += 1
-    return temporal_name
-
-
-
-###FUNCIONES
+#/////////////////////////FUNCIONES////////////////////
 
 # Función para asignar dirección de memoria a una variable global
 def assign_global_memory(var_type):
@@ -520,32 +588,33 @@ def assign_global_memory(var_type):
             current_global_int_address += 1
             return address
         else:
-            raise Exception("Error: Overflow de variables enteras globales.")
+            raise Exception("Error: Se ha excedido el número máximo de variables enteras globales.")
     elif var_type == FLOAT:
         if current_global_float_address < MAX_GLOBAL_FLOAT:
             address = current_global_float_address
             current_global_float_address += 1
             return address
         else:
-            raise Exception("Error: Overflow de variables flotantes globales.")
+            raise Exception("Error: Se ha excedido el número máximo de variables flotantes globales.")
     elif var_type == CHAR:
         if current_global_char_address < MAX_GLOBAL_CHAR:
             address = current_global_char_address
             current_global_char_address += 1
             return address
         else:
-            raise Exception("Error: Overflow de variables de tipo char globales.")
+            raise Exception("Error: Se ha excedido el número máximo de variables de tipo char.")
     elif var_type == BOOL:
         if current_global_bool_address < MAX_GLOBAL_BOOL:
             address = current_global_bool_address
             current_global_bool_address += 1
             return address
         else:
-            raise Exception("Error: Overflow de variables booleanas globales.")
+            raise Exception("Error: Se ha excedido el número máximo de variables booleanas.")
     else:
-        raise Exception(f"El dato: {var_type}, no se maneja en este compilador")
+        raise Exception(f"Tipo de dato no manejado: {var_type}")
     
 
+#Funcion asigna la memoria correspondiente a las constantes del programa
 def assign_constant_memory(const_value):
     global current_constant_int_address, current_constant_float_address, current_constant_char_address, current_constant_bool_address, tabla_cte
     
@@ -555,31 +624,30 @@ def assign_constant_memory(const_value):
     if const_value in tabla_cte:
         return tabla_cte[const_value]['address']
 
-    # Asignar dirección según el tipo de constante
     if isinstance(const_value, int):
         if current_constant_int_address < MAX_CONSTANT_INT:
             address = current_constant_int_address
             current_constant_int_address += 1
         else:
-            raise Exception("Error: No puedes usar tantas constantes enteras.")
+            raise Exception("Error: Se ha excedido el número máximo de constantes enteras.")
     elif isinstance(const_value, float):
         if current_constant_float_address < MAX_CONSTANT_FLOAT:
             address = current_constant_float_address
             current_constant_float_address += 1
         else:
-            raise Exception("Error: No puedes usar tantas constantes flotantes.")
+            raise Exception("Error: Se ha excedido el número máximo de constantes flotantes.")
     elif isinstance(const_value, str) and len(const_value) == 1:
         if current_constant_char_address < MAX_CONSTANT_CHAR:
             address = current_constant_char_address
             current_constant_char_address += 1
         else:
-            raise Exception("Error: No puedes usar tantas constantes de tipo char.")
+            raise Exception("Error: Se ha excedido el número máximo de constantes de tipo char.")
     elif isinstance(const_value, str) and const_value in ['true', 'false']:
         if current_constant_bool_address < MAX_CONSTANT_BOOL:
             address = current_constant_bool_address
             current_constant_bool_address += 1
         else:
-            raise Exception("Error: No puedes usar tantas constantes booleanas.")
+            raise Exception("Error: Se ha excedido el número máximo de constantes booleanas.")
     else:
         raise Exception(f"Tipo de constante no manejado: {type(const_value)}")
 
@@ -590,53 +658,129 @@ def assign_constant_memory(const_value):
     }
     return address
     
-
-def assign_local_memory(const_value):
+#Funcion que asignar direccion a las variables locales
+def assign_local_memory(var_type):
     global current_local_int_address, current_local_float_address, current_local_char_address, current_local_bool_address
-
-    # Asumiendo que las constantes son solo INT o FLOAT
-    if isinstance(const_value, int):
+    if var_type == INT:
         if current_local_int_address < MAX_LOCAL_INT:
             address = current_local_int_address
             current_local_int_address += 1
             return address
         else:
-            raise Exception("Error: Se ha excedido el número máximo local enteras.")
-    elif isinstance(const_value, float):
+            raise Exception("Error: Se ha excedido el número máximo de variables enteras locales.")
+    elif var_type == FLOAT:
         if current_local_float_address < MAX_LOCAL_FLOAT:
             address = current_local_float_address
             current_local_float_address += 1
             return address
         else:
-            raise Exception("Error: Se ha excedido el número máximo local flotantes.")
-    elif isinstance(const_value, str) and len(const_value) == 1: 
+            raise Exception("Error: Se ha excedido el número máximo de variables flotantes locales.")
+    elif var_type == CHAR:
         if current_local_char_address < MAX_LOCAL_CHAR:
             address = current_local_char_address
             current_local_char_address += 1
             return address
         else:
-            raise Exception("Error: Se ha excedido el número máximo local de tipo char.")
-    elif isinstance(const_value, str) and const_value in ['true', 'false']:  # Asumiendo que las constantes bool son 'true' o 'false'
+            raise Exception("Error: Se ha excedido el número máximo de variables de tipo char.")
+    elif var_type == BOOL:
         if current_local_bool_address < MAX_LOCAL_BOOL:
             address = current_local_bool_address
             current_local_bool_address += 1
             return address
         else:
-            raise Exception("Error: Se ha excedido el número máximo local booleanas.")
+            raise Exception("Error: Se ha excedido el número máximo de variables booleanas.")
     else:
-        raise Exception(f"Tipo de constante no manejado: {type(const_value)}")
+        raise Exception(f"Tipo de dato no manejado: {var_type}")
+
+
+#Funcion para verificar el tipo de cadruplo que se genera con el operador
+def check_for_quad_generation():
+    if len(pila_operadores) > 0:
+        # Verificar la precedencia del operador
+        top_operator = pila_operadores[-1]
+        if top_operator in ['+', '-', '*', '/']:
+            # Implementa aquí la lógica para generar cuádruplos
+            generate_quad()
+
+
+#Funcion que genera el cuadruplo de operacion
+def generate_quad():
+    right_operand = pila_operandos.pop()
+    right_type = pila_tipos.pop()
+    left_operand = pila_operandos.pop()
+    left_type = pila_tipos.pop()
+    operator = pila_operadores.pop()
+    #Verifico que el tipo de operacion sea valida
+    result_type = validate_operation(left_type, right_type, operator)
+    if result_type != 'ERROR':
+        result = generate_temporal()
+        cuad.append((operator, left_operand, right_operand, result))
+        pila_operandos.append(result)
+        pila_tipos.append(result_type)
+    else:
+        print(f"Error de tipo en la operación: {left_type} {operator} {right_type}")
+
+#Funcion que genera temporales
+def generate_temporal():
+    global temporal_count
+    temporal_name = f"t{temporal_count}"
+    temporal_count += 1
+    return temporal_name
+
+
+# Función para manejar la declaración de variables globales
+def handle_global_vars(id_list, var_type):
+    #Paso por cada variable del contexto global
+    for var_id in id_list:
+        #Verifico el tipo de la variable y le asigno su direccion a cada variable global
+        address = assign_global_memory(var_type)
+        directorio_funciones['global']['vars'][var_id] = {
+            'type': var_type,
+            'address': address
+        }
+
+# Función para manejar la declaración de variables locales a una función
+def handle_local_vars(func_name, id_list, var_type):
+    #Paso por cada variable del contexto local
+    for var_id in id_list:
+        #Verifico el tipo de la variable y le asigno su direccion a cada variable local
+        address = assign_local_memory(var_type)
+        directorio_funciones[func_name]['vars'][var_id] = {
+            'type': var_type,
+            'address': address
+        }
+
+
+def imprimir_directorio_funciones(directorio):
+    print("Directorio de Funciones:")
+    for nombre_funcion, info_funcion in directorio.items():
+        print(f"\nFunción: {nombre_funcion}")
+        print(f"  Tipo de retorno: {info_funcion['tipo']}")
+        
+        # Imprimir parámetros de la función
+        print("  Parámetros:")
+        for param in info_funcion.get('params', []):
+            print(f"    {param[0]}: {param[1]}")
+
+        # Imprimir variables locales de la función
+        print("  Variables Locales:")
+        for var_nombre, var_info in info_funcion.get('vars', {}).items():
+            print(f"    {var_nombre}:")
+            print(f"      Tipo: {var_info['type']}")
+            print(f"      Dirección: {var_info['address']}")
+    print("\n")
 
 
 
-
-
-###PUNTOS NEURLAGICOS 
+#/////////////////////PUNTOS NEURLAGICOS///////////////////// 
 
 #IF
 
+#Punto que verficia la expresion, guarda la posicion del gotof y genera su cuadruplo
 def p_verificar_if(p):
     '''verificar_if : '''
     global cuad, pila_saltos, pila_operandos, pila_tipos
+    #Se guarda el resultado de la expresion
     result_condicion = pila_operandos.pop()
     exp_type = pila_tipos.pop()
     #Verifico que sea el tipo de dato correcto
@@ -647,19 +791,20 @@ def p_verificar_if(p):
         jump_position_if = len(cuad) - 1
         pila_saltos.append(jump_position_if)
 
-
+#Punto que verifica a donde salta el gotof o el goto dependiendo si es if o ifelse
 def p_verificar_bloque_if(p):
     '''verificar_bloque_if : '''
     global cuad, pila_saltos
-    if len(p) == 1:  # Corresponde a la regla de producción de if-else y actualiza el salto del goto
+    if len(p) == 1:  # Si es if-else sobrescribe el cuadruplo para el salto goto
         jump_position_else = pila_saltos.pop()
         cuad[jump_position_else] = (cuad[jump_position_else][0], cuad[jump_position_else][1], cuad[jump_position_else][2], len(cuad))
 
-    else:  # Solo if y actualiza su salto
+    else:  # Si solo tiene un if, sobreescribo el cuadruplo del gotof con el salto
         jump_position_if = pila_saltos.pop()
         cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
 
 
+#Punto que verifica el bloque del else, genera el cuadruplo del else y guarda su posicion
 def p_verificar_bloque_else(p):
     '''verificar_bloque_else : '''
     global pila_saltos
@@ -671,27 +816,31 @@ def p_verificar_bloque_else(p):
     cuad[jump_position_if] = (cuad[jump_position_if][0], cuad[jump_position_if][1], cuad[jump_position_if][2], len(cuad))
 
 #WHILE    
-     
-def p_guardar_posicion_while(p):
-    '''guardar_posicion_while : '''
+
+#Punto que guarda la posicion del while 
+def p_save_position_while(p):
+    '''save_position_while : '''
     global pila_saltos, cuad
-    #Guardo en que posicion esta el while en los cuadruplos para el goto
+    #Guardo en que posicion esta el while en la pila para el goto
     pila_saltos.append(len(cuad))
 
-def p_verificar_expresion_while(p):
-    '''verificar_expresion_while : '''
+#Punto que verifica el tipo de dato generado de la expresion y se genera el cuadruplo del gotof
+def p_check_while_exp(p):
+    '''check_while_exp : '''
     global pila_tipos, pila_operandos, cuad, pila_saltos
     exp_type = pila_tipos.pop()
     #Verifico que sea el tipo de dato correcto
     if exp_type != BOOL:
         raise Exception("Error de tipo: Se esperaba una expresión booleana")
     else:
+        #Genero el cuadruplo del gotof y guardo la posicion
         result = pila_operandos.pop()
         cuad.append(('GotoF', result, '', None))
         pila_saltos.append(len(cuad) - 1)
 
-def p_llenar_cuadruplo_while(p):
-    '''llenar_cuadruplo_while : '''
+#Punto que llena los saltos del goto y gotof del while
+def p_fill_jump_while(p):
+    '''fill_jump_while : '''
     global pila_saltos, cuad
     #Le hago pop a el salto del gotof
     inicio_while = pila_saltos.pop(-2)

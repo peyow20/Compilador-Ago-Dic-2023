@@ -5,6 +5,19 @@ var
    i,w:bool;
    a,b:char;
 
+func int Sumar()
+var 
+   e:float;
+{
+    e = 8.2;
+    while (e > 0) do
+    { 
+    e = e+1;
+    }
+}
+return e;
+
+
 
 
 main()
