@@ -24,6 +24,18 @@ Se estan terminando funciones con su direccionamiento adecuado
 
 # MANUAL DE USUARIO
 
+## REQUERIMIENTOS DE INSTALACION
+```
+pip install ply
+```
+
+## COMO FUNCIONA?
+```
+PASO 1: Clonar repositorio
+PASO 2: Tener un .txt con el codigo del problema
+PASO 3: En la terminal escribir el comando (pyhton main.py "NOMBRE_DEL_ARCHIVO.TXT")
+```
+
 
 Estructura del programa
 ```
@@ -58,6 +70,8 @@ RESTAS -> x=x-y;
 MULTIPLICACION -> x=x*y;
 DIVISION -> x=x/y;
 ASGINACION -> x=x+1;
+OUTPUT -> write(x);
+INPUT -> read(x);
 /*SE PUEDEN INDEXAR MULTIPLES COMPARACIONES*/
 CONDICIONES IF-> if(x>y){
                   x=x-1;   
