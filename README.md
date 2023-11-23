@@ -23,3 +23,33 @@ Se estan terminando funciones con su direccionamiento adecuado
 
 
 # MANUAL DE USUARIO
+
+
+Estructura del programa
+```
+program *NOMBRE DEL PROGRAMA*;
+var
+    /*DECLARACION DE VARIABLES PARA EL MAIN: INT, FLOAT, BOOL*/
+    x,y,z:int
+
+/*EN CASO DE TENER, DESARROLLAR AQUI FUNCIONES*/
+func int suma(int a, int b)
+var
+    /*DECLARACION DE VARIABLES PARA LA FUNCION: INT, FLOAT, BOOL*/
+    x,y,z:int
+{
+/*BLOQUE DE CODIGO*/
+}
+return /*Expresion*/;
+
+/*INICIALIZAR EL MAIN*/
+main()
+{
+/*BLOQUE DE CODIGO*/
+}
+```
+
+
+
+
+```
