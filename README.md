@@ -70,5 +70,13 @@ CONDICIONES IF-ELSE-> if(x>y){
 CONDICIONES WHILE-> while (x>y) do{
                     x=x-1;
                     }
-
+/*EXPRESIONES CONDICIONALES VALIDAS*/
+MAYOR QUE -> >
+MENOR QUE -> <
+IGUAL QUE -> ==
+MAYORIGUAL -> >=
+MENORIGUAL -> <=
+DIFFERENTE -> !=
+AND -> &&
+OR -> ||
 ```
