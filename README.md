@@ -50,6 +50,24 @@ main()
 ```
 
 
-
+## OPCION DE "BLOQUE"
+```
+/*SE PUEDEN REALIZAR MULTIPLES EXPRESIONES EN LA MISMA LINEA, CON PPRIORIDAD CLASICA*/
+SUMAS -> x=x+y;
+RESTAS -> x=x-y;
+MULTIPLICACION -> x=x*y;
+DIVISION -> x=x/y;
+ASGINACION
+CONDICIONES IF-> if(x>y){
+                  x=x-1;   
+                  };
+CONDICIONES IF-ELSE-> if(x>y){
+                  x=x-1;   
+                  }else{
+                  x=x+1;
+                   };
+CONDICIONES WHILE-> while (x>y) do{
+                    x=x-1;
+                    }
 
 ```
