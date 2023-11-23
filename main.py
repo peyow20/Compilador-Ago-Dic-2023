@@ -1,6 +1,6 @@
 import sys
-from parser_1 import parse
-
+from parser_1 import parse, cuad, directorio_funciones, tabla_cte
+from vm import MaquinaVirtual  # Asegúrate de que el nombre del archivo y la clase sean correctos
 
 if len(sys.argv) < 2:
     print("Debe proporcionar un archivo para analizar")
@@ -14,6 +14,9 @@ try:
         result = parse(data)
         if result == "ACC":
             print("Correcto")
+            # Crear y ejecutar la máquina virtual
+            #vm = MaquinaVirtual(cuad, directorio_funciones, tabla_cte)
+            #vm.run()
         else:
             print("Algo anda mal")
 except FileNotFoundError:

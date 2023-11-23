@@ -14,6 +14,7 @@ reserved = {
     'while': 'WHILE',
     'for': 'FOR',
     'write': 'WRITE',
+    'read': 'READ',
     'arr' : 'ARR',
     'func' : 'FUNC',
     'void' : 'VOID',
@@ -27,7 +28,7 @@ reserved = {
 tokens = ['PROGRAM', 'VAR', 'INT', 'FLOAT', 'CHAR', 'BOOL', 'CTEI', 'CTEF', 'CTEB', 'CTESTRING', 'CTEC', 
           'ID', 'IF', 'ELSE', 'WHILE', 'MAYOR', 'FOR', 'MENOR', 'DIFF','IGIG','MAYIG','MENIG', 'MAS', 'MENOS', 'POR', 'DIV', 'MOD',
           'LLAVIZQ', 'VOID', 'LLAVDER', 'PARIZQ', 'PARDER', 'CORCHIZQ', 'CORCHDER', 'DOSPUN', 'PUNCOM', 
-          'COMA', 'IGUAL', 'WRITE', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
+          'COMA', 'IGUAL', 'WRITE', 'READ', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
 
 
 t_ignore = " \t"
