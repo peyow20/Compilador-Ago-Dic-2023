@@ -20,3 +20,77 @@ Se tienen ya cuadruplos de asignacion y en un 80% de expresiones
 
 ## Avance 8
 Se estan terminando funciones con su direccionamiento adecuado
+
+
+# MANUAL DE USUARIO
+
+## REQUERIMIENTOS DE INSTALACION
+```
+pip install ply
+```
+
+## COMO FUNCIONA?
+```
+PASO 1: Clonar repositorio
+PASO 2: Tener un .txt con el codigo del problema
+PASO 3: En la terminal escribir el comando (pyhton main.py "NOMBRE_DEL_ARCHIVO.TXT")
+```
+
+
+Estructura del programa
+```
+program *NOMBRE DEL PROGRAMA*;
+var
+    /*DECLARACION DE VARIABLES PARA EL MAIN: INT, FLOAT, BOOL*/
+    x,y,z:int
+
+/*EN CASO DE TENER, DESARROLLAR AQUI FUNCIONES*/
+func int suma(int a, int b)
+var
+    /*DECLARACION DE VARIABLES PARA LA FUNCION: INT, FLOAT, BOOL*/
+    x,y,z:int
+{
+/*BLOQUE DE CODIGO*/
+}
+return /*Expresion*/;
+
+/*INICIALIZAR EL MAIN*/
+main()
+{
+/*BLOQUE DE CODIGO*/
+}
+```
+
+
+## OPCION DE "BLOQUE"
+```
+/*SE PUEDEN REALIZAR MULTIPLES EXPRESIONES ARITMETICAS EN LA MISMA LINEA, CON PPRIORIDAD CLASICA*/
+SUMAS -> x=x+y;
+RESTAS -> x=x-y;
+MULTIPLICACION -> x=x*y;
+DIVISION -> x=x/y;
+ASGINACION -> x=x+1;
+OUTPUT -> write(x);
+INPUT -> read(x);
+/*SE PUEDEN INDEXAR MULTIPLES COMPARACIONES*/
+CONDICIONES IF-> if(x>y){
+                  x=x-1;   
+                  };
+CONDICIONES IF-ELSE-> if(x>y){
+                  x=x-1;   
+                  }else{
+                  x=x+1;
+                   };
+CONDICIONES WHILE-> while (x>y) do{
+                    x=x-1;
+                    }
+/*EXPRESIONES CONDICIONALES VALIDAS*/
+MAYOR QUE -> >
+MENOR QUE -> <
+IGUAL QUE -> ==
+MAYORIGUAL -> >=
+MENORIGUAL -> <=
+DIFFERENTE -> !=
+AND -> &&
+OR -> ||
+```
