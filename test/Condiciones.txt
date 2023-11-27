@@ -1,0 +1,17 @@
+program Condiciones;
+var
+   x,y:int;
+   z:float;
+
+main()
+{
+   x=4;
+   y=6;
+   if(x > y){
+    z=x/y;
+    write(z);
+   }else{
+    z=y/x;
+    write(z);
+   };
+}

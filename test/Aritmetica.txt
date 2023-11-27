@@ -1,0 +1,12 @@
+program Aritmetica;
+var
+   x,y:int;
+   z:float;
+
+main()
+{
+   x = 3;
+   read(y);
+   z = 3*7-(x+y)/4;
+   write(z);
+}

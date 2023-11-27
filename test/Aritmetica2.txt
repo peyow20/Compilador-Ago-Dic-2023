@@ -1,0 +1,13 @@
+program Aritmetica2;
+var
+   x,y:int;
+   z:float;
+
+main()
+{
+   x = 3;
+   read(y);
+   z = x/4;
+   z = (2+x)*7-(x+y)/z;
+   write(z);
+}

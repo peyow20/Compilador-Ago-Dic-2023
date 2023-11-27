@@ -13,10 +13,10 @@ try:
         data = f.read()
         result = parse(data)
         if result == "ACC":
-            print("Correcto")
+            print("Corriendo...")
             # Crear y ejecutar la máquina virtual
-            #vm = MaquinaVirtual(cuad, directorio_funciones, tabla_cte)
-            #vm.run()
+            vm = MaquinaVirtual(cuad, directorio_funciones, tabla_cte)
+            vm.run()
         else:
             print("Algo anda mal")
 except FileNotFoundError:

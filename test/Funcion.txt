@@ -1,0 +1,36 @@
+program TestCorrect;
+var
+   x,y,z:int;
+   i:float;
+
+func int Restar()
+var 
+   e:int;
+   i:float;
+{
+    e = 8;
+    write(8);
+    while (e > 5) do
+    { 
+    e = e-1;
+    }
+}
+return e;
+
+main()
+{
+   x = 3;
+   y = 2;
+   read(z);
+   Restar();
+   if (x > y) {
+      write(z);
+   }else{ 
+      if(x<y){
+         while (x<y) do{
+            x=x+1;
+         }
+      };
+    z = x+y;
+    };
+}

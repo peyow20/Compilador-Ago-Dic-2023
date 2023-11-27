@@ -20,6 +20,7 @@ reserved = {
     'void' : 'VOID',
     'to' : 'TO',
     'do' : 'DO',
+    'media' : 'MEDIA',
     'return' : 'RETURN',
     'main' : 'MAIN',
 }
@@ -27,7 +28,7 @@ reserved = {
 #Defino mis tokens
 tokens = ['PROGRAM', 'VAR', 'INT', 'FLOAT', 'CHAR', 'BOOL', 'CTEI', 'CTEF', 'CTEB', 'CTESTRING', 'CTEC', 
           'ID', 'IF', 'ELSE', 'WHILE', 'MAYOR', 'FOR', 'MENOR', 'DIFF','IGIG','MAYIG','MENIG', 'MAS', 'MENOS', 'POR', 'DIV', 'MOD',
-          'LLAVIZQ', 'VOID', 'LLAVDER', 'PARIZQ', 'PARDER', 'CORCHIZQ', 'CORCHDER', 'DOSPUN', 'PUNCOM', 
+          'LLAVIZQ', 'VOID', 'LLAVDER', 'PARIZQ', 'MEDIA', 'PARDER', 'CORCHIZQ', 'CORCHDER', 'PUN','DOSPUN', 'PUNCOM', 
           'COMA', 'IGUAL', 'WRITE', 'READ', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
 
 
@@ -98,9 +99,8 @@ def t_IGUAL(t):
     r'\='
     return t
 
-def t_ARR(t):
-    r'ARR'
-    return t
+def t_PUN(t):
+    R'\.'
 
 def t_DIFF(t):
     r'\!'
