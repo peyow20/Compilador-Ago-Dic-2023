@@ -15,7 +15,6 @@ reserved = {
     'for': 'FOR',
     'write': 'WRITE',
     'read': 'READ',
-    'arr' : 'ARR',
     'func' : 'FUNC',
     'void' : 'VOID',
     'to' : 'TO',
@@ -29,7 +28,7 @@ reserved = {
 tokens = ['PROGRAM', 'VAR', 'INT', 'FLOAT', 'CHAR', 'BOOL', 'CTEI', 'CTEF', 'CTEB', 'CTESTRING', 'CTEC', 
           'ID', 'IF', 'ELSE', 'WHILE', 'MAYOR', 'FOR', 'MENOR', 'DIFF','IGIG','MAYIG','MENIG', 'MAS', 'MENOS', 'POR', 'DIV', 'MOD',
           'LLAVIZQ', 'VOID', 'LLAVDER', 'PARIZQ', 'MEDIA', 'PARDER', 'CORCHIZQ', 'CORCHDER', 'PUN','DOSPUN', 'PUNCOM', 
-          'COMA', 'IGUAL', 'WRITE', 'READ', 'AND', 'OR', 'ARR', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
+          'COMA', 'IGUAL', 'WRITE', 'READ', 'AND', 'OR', 'ARRdot', 'TO', 'DO', 'RETURN', 'MAIN', 'FUNC',]
 
 
 t_ignore = " \t"
@@ -40,6 +39,11 @@ def t_ID(t):
     r'[A-Za-z][A-Za-z0-9_]*'
     t.type = reserved.get(t.value, 'ID')
     return t
+
+def t_ARRdot(t):
+    r'\.\.\.'    
+    return t
+
 
 def t_CTEF(t):
     r'\d+\.\d+|\.\d+'

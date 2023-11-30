@@ -2,6 +2,7 @@ program Aritmetica;
 var
    x,y:int;
    z:float;
+   int arr[2...5];
 
 main()
 {

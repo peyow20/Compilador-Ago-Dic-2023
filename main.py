@@ -1,6 +1,6 @@
 import sys
 from parser_1 import parse, cuad, directorio_funciones, tabla_cte
-from vm import MaquinaVirtual  # Asegúrate de que el nombre del archivo y la clase sean correctos
+from vm import MaquinaVirtual
 
 if len(sys.argv) < 2:
     print("Debe proporcionar un archivo para analizar")

@@ -10,7 +10,7 @@ main()
    y = 10;
    t = false;
    i = true;
-   if (i && t){
+   if (i || t){
     z = x/y*(5*3);
     write(z);
    }else{

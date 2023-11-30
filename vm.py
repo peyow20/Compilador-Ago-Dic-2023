@@ -6,10 +6,11 @@ class MaquinaVirtual:
         self.cuad = cuad
         self.directorio_funciones = directorio_funciones
         self.tabla_cte = tabla_cte
+        self.salto = []
+        self.return_value = None
+        self.current_function = 'global'
         #nicializo la mememoria
         self.mem = self.inicializar_mem()
-        self.pila_retornos = []
-        self.pila_contextos = []
         self.p_cuad = 0  
 
     def inicializar_mem(self):
@@ -20,7 +21,6 @@ class MaquinaVirtual:
 
         for var_name, var_info in self.directorio_funciones['global']['vars'].items():
             mem[var_info['address']] = None
-
         return mem
 
     def run(self):
@@ -54,34 +54,52 @@ class MaquinaVirtual:
                 self.write(cuad)
             elif operacion == 'read':
                 self.read(cuad)
-            #elif operacion == 'ERA':
-             #   self.era(cuad)
-            #elif operacion == 'GOSUB':
-             #   self.gosub(cuad)
-            #elif operacion == 'RET':
-             #   self.ret(cuad)
-            #elif operacion == 'ENDFunc':
-             #   self.end_func(cuad)
+            elif operacion == 'GOSUB':
+               self.gosub(cuad)
+            elif operacion == 'ret':
+                self.ret(cuad)
+            elif operacion == 'ENDFunc':
+                self.end_func(cuad)
+            elif operacion == 'PARAMETER':
+                self.parameter(cuad)
             #Paso al siguiente paso
             self.p_cuad += 1
 
 
-
-    
-    #def era(self, cuad):
-
+#En base a la direccion de los argumentos mandados a la funcion, les asigan su valor a la direccion de los parametros de las funciones
     # Inicializar variables locales
+    def parameter(self, cuad):
+        arg_address = cuad[1]  # Guardo la direccion del argumento en el cuadruplo
+        arg_value = self.get_value(arg_address)  # Obtengo el valor del argumento
+        param_address = cuad[3]  # Obtengo la direccion del parametro
+        self.set_value(param_address, arg_value) # Le asigno el valor del argumento al parametro
+
+#Basicamente guardo el valor del retorno en base a la direccion de la misma
+    def ret(self, cuad):
+        # Capturo el valor de retorno
+        return_value = self.get_value(cuad[3])
+    
+        # Obtengo la dirección de retorno para la función actual
+        ret_address = self.directorio_funciones[self.current_function]['ret_address']
         
+        # Asignar el valor de retorno a la dirección de retorno
+        self.set_value(ret_address, return_value)
 
-    #def gosub(self, cuad):
+#Guardo en donde estoy haciendo el salto para luego regresar
+    def gosub(self, cuad):
+        # Guardo el salto para el termino de la funcion
+        self.salto.append(self.p_cuad + 1)
+        # Saltar a la dirección de inicio de la función
+        self.p_cuad = cuad[3] - 1  #
 
-
-
-    #def ret(self, cuad):
-
-
-    #def end_func(self, cuad):
-
+#Funcion que me devuelve al contexto donde mande llamar la funcion
+    def end_func(self, cuad):
+        self.p_cuad = self.salto.pop() - 1
+            
+    def asignacion(self, cuad):
+        value = self.get_value(cuad[1])
+        result_address = cuad[3]
+        self.set_value(result_address, value)
     
 #Obtengo el valor de la direcciones de memoria
     def get_value(self, address):
@@ -98,6 +116,7 @@ class MaquinaVirtual:
                 except ValueError:
                     pass  # Si no se puede convertir, deja el valor como está (string)
         return value
+    
     #Establezco el valor de una direccion de memoria
     def set_value(self, address, value):
         self.mem[address] = value
@@ -106,7 +125,6 @@ class MaquinaVirtual:
         left_operand = self.get_value(cuad[1])
         right_operand = self.get_value(cuad[2])
         result_address = cuad[3]
-
         if left_operand is None or right_operand is None:
             raise Exception("Operación aritmética con operandos no inicializados")
 
@@ -118,7 +136,6 @@ class MaquinaVirtual:
             result = left_operand * right_operand
         elif operacion == '/':
             result = left_operand / right_operand
-
         self.set_value(result_address, result)
 
     def operacion_comparacion(self, cuad, operacion):
@@ -161,11 +178,6 @@ class MaquinaVirtual:
 
         self.set_value(result_address, result)
 
-    def asignacion(self, cuad):
-        value = self.get_value(cuad[1])
-        result_address = cuad[3]
-        self.set_value(result_address, value)
-
     def goto_f(self, cuad):
         condition = self.get_value(cuad[1])
         if not condition:
@@ -175,7 +187,14 @@ class MaquinaVirtual:
         self.p_cuad = cuad[3] - 1
 
     def write(self, cuad):
-        value = self.get_value(cuad[1]) if cuad[1] != '' else cuad[1]
+    # Verifica si el primer elemento del cuádruplo es una dirección
+        if isinstance(cuad[1], int):
+            value = self.get_value(cuad[1])
+        else:
+        # Si no es una direccion, usa el valor del cuaduplo
+            value = cuad[1]
+
+    # Imprime el valor
         print(value)
 
     def read(self, cuad):
@@ -193,13 +212,12 @@ class MaquinaVirtual:
                 converted_value = float(input_value)
             elif result_type == 'bool':
                 pass
-            else:  # Para 'char' o cualquier otro tipo, lo deja como string
+            else: 
                 converted_value = input_value
 
             # Almacena el valor convertido
             self.set_value(var_address, converted_value)
         else:
-        # Manejar el error o la situación de no encontrar el nombre
            pass
 
     #Obtengo la informacion de las variables de mi directorio(direccion)

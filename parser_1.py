@@ -225,26 +225,6 @@ def p_param_empty(p):
 def p_acum_func(p):
      '''acum_func : funcion acum_func
                   | empty'''
-     
-    
-def p_call_func(p):
-    '''call_func : ID func_name_call PARIZQ gen_era argumentos_llamada verify_param_count PARDER generate_gosub PUNCOM'''
-    global param_counter
-    param_counter = 0
-    
-def p_argumentos_llamada(p):
-    '''argumentos_llamada : expresion verify_argument_type COMA argumentos_llamada increment_param_counter
-                          | expresion verify_argument_type
-                          | empty'''
-    if len(p) == 4:
-        # Manejar múltiples argumentos
-        p[0] = [p[1]] + p[4]
-    elif len(p) == 3:
-        # Manejar un solo argumento
-        p[0] = [p[1]]
-    else:
-        # No hay argumentos
-        p[0] = []
 
 
 #En las siguiente 4 reglas me ayudan a construir el area de las variables
@@ -259,12 +239,24 @@ def p_id_lista(p):
         p[0] = [p[1]]
 
 def p_arreglos(p):
-    '''arreglos : TIPO ID CORCHIZQ CTEI PUN PUN PUN CORCHDER PUNCOM'''
+    '''arreglos : TIPO ID CORCHIZQ CTEI ARRdot CTEI CORCHDER PUNCOM'''
     array_type = p[1]
     array_id = p[2]
-    lower_bound = p[4] 
-    upper_bound = p[8]
-    p[0] = (array_type, array_id, lower_bound, upper_bound)
+    lower_bound = p[4]
+    upper_bound = p[6]
+    
+    # Asigna memoria y calcula el tamaño del arreglo
+    base_address, array_size = assign_array_memory(array_type, lower_bound, upper_bound)
+
+    # Añade la información del arreglo al directorio de funciones
+    array_info = {
+        'type': array_type,
+        'base_address': base_address,
+        'lower_bound': lower_bound,
+        'upper_bound': upper_bound,
+        'size': array_size
+    }
+    directorio_funciones[current_function]['vars'][array_id] = array_info
 
 
 def p_vars(p):
@@ -320,33 +312,52 @@ def p_multiples_estatutos(p):
 #Las 6 sigueintes reglas son para establecer la semantica 
 # de los difetenes tipos de estatutos 
 def p_asignacion(p):
-    '''asignacion : ID IGUAL expresion PUNCOM'''
+    '''asignacion : ID IGUAL call_func
+                  | ID IGUAL expresion PUNCOM'''
+    
     var_name = p[1]  # Nombre de la variable a la que se asigna
 
+    if len(p) == 5 : 
     # Buscar la variable en el directorio de funciones bajo el contexto actual
-    func_context = directorio_funciones[current_function if current_function in directorio_funciones else 'global']
-    if var_name in func_context['vars']:
-        var_type = func_context['vars'][var_name]['type']
-        var_address = func_context['vars'][var_name]['address']
+        func_context = directorio_funciones[current_function if current_function in directorio_funciones else 'global']
+        if var_name in func_context['vars']:
+            var_type = func_context['vars'][var_name]['type']
+            var_address = func_context['vars'][var_name]['address']
 
-        if len(pila_tipos) > 0:
-            expr_type = pila_tipos.pop()
+            if len(pila_tipos) > 0:
+                expr_type = pila_tipos.pop()
+            else:
+                raise Exception("Error de pila de tipos")
+
+                # Verificar compatibilidad de tipos
+            if expr_type == var_type or (var_type == FLOAT and expr_type == INT):
+                operando_izq_address = var_address
+                operando_der = pila_operandos.pop()
+
+                    # Cuádruplo con direcciones
+                cuadruplo_asignacion = ('=', operando_der, '', operando_izq_address)
+                cuad.append(cuadruplo_asignacion)
+            else:
+                raise Exception(f"Tipo no compatible en la asignación a '{var_name}'")
         else:
-            raise Exception("Error de pila de tipos")
+                raise Exception(f"Variable no declarada: {var_name}")
+    else :
+        var_info = get_variable_info(var_name, current_function)
+        if var_info is None:
+            raise Exception(f"Error: Variable no declarada '{var_name}'")
 
-        # Verificar compatibilidad de tipos
-        if expr_type == var_type or (var_type == FLOAT and expr_type == INT):
-            operando_izq_address = var_address
-            operando_der = pila_operandos.pop()
+        # Obtiene el tipo de la variable y el valor de retorno de la pila
+        var_type = var_info['type']
+        return_value = pila_operandos.pop()
+        return_type = pila_tipos.pop()
 
-            # Cuádruplo con direcciones
-            cuadruplo_asignacion = ('=', operando_der, '', operando_izq_address)
-            cuad.append(cuadruplo_asignacion)
-        else:
-            raise Exception(f"Tipo no compatible en la asignación a '{var_name}'")
-    else:
-        raise Exception(f"Variable no declarada: {var_name}")
-    
+        # Verifica que el tipo del valor de retorno coincida con el tipo de la variable
+        if var_type != return_type:
+            raise Exception(f"Error de tipo: Intento de asignar {return_type} a {var_type}")
+
+        # Genera el cuádruplo de asignación del valor de retorno a la variable
+        cuad.append(('=', return_value, '', var_info['address']))
+        
 
 def p_lectura(p):
     '''lectura : READ PARIZQ ID PARDER PUNCOM'''
@@ -405,7 +416,6 @@ def p_expresion_or(p):
     gen_cuad_logico(p, 'OR')
 
 #Regla que define la jeraquia de dos expresiones
-
 def p_expresion(p):
     '''expresion : exp 
                  | exp MAYOR exp
@@ -417,9 +427,9 @@ def p_expresion(p):
 
     if len(p) > 2:
         # Manejo de operadores de comparación
-        right_operand = pila_operandos.pop()  # Extrae primero el operando derecho
-        left_operand = pila_operandos.pop()  # Luego el operando izquierdo
-        
+        right_operand = pila_operandos.pop()
+        left_operand = pila_operandos.pop()
+    
         right_type = pila_tipos.pop()  # Asumiendo que aquí se extrae un string que indica el tipo
         left_type = pila_tipos.pop()  # Asumiendo que aquí también se extrae un string que indica el tipo
 
@@ -642,6 +652,51 @@ def assign_local_memory(var_type):
     else:
         raise Exception(f"Tipo de dato no manejado: {var_type}")
 
+def assign_array_memory(array_type, lower_bound, upper_bound):
+    global current_local_int_address, current_local_float_address, current_local_char_address, current_local_bool_address
+    global current_global_int_address, current_global_float_address, current_global_char_address, current_global_bool_address, current_function
+    size = upper_bound - lower_bound + 1
+    if current_function != 'global':
+        if array_type == INT:
+            address = current_local_int_address
+            current_local_int_address += size
+        elif array_type == FLOAT:
+            address = current_local_float_address
+            current_local_float_address += size
+        elif array_type == CHAR:
+            address = current_local_char_address
+            current_local_char_address += size
+        elif array_type == BOOL:
+            address = current_local_bool_address
+            current_local_bool_address += size
+        else:
+            raise Exception(f"Tipo de dato no manejado para arreglos: {array_type}")
+    else : 
+        if array_type == INT:
+            address = current_global_int_address
+            current_global_int_address += size
+        elif array_type == FLOAT:
+            address = current_global_float_address
+            current_global_float_address += size
+        elif array_type == CHAR:
+            address = current_global_char_address
+            current_global_char_address += size
+        elif array_type == BOOL:
+            address = current_global_bool_address
+            current_global_bool_address += size
+        else:
+            raise Exception(f"Tipo de dato no manejado para arreglos: {array_type}")
+        
+
+    return address, size
+
+def get_variable_info(var_name, current_function):
+    if var_name in directorio_funciones[current_function]['vars']:
+        return directorio_funciones[current_function]['vars'][var_name]
+    elif var_name in directorio_funciones['global']['vars']:
+        return directorio_funciones['global']['vars'][var_name]
+    return None
+
 
 #Funcion para verificar el tipo de cadruplo que se genera con el operador
 def check_for_quad_generation():
@@ -655,8 +710,11 @@ def check_for_quad_generation():
 def gen_cuad_logico(p, operador):
     global pila_tipos, pila_operandos, cuad
     right_operand = pila_operandos.pop()
+    print("der",right_operand)
     right_type = pila_tipos.pop()
     left_operand = pila_operandos.pop()
+    print("izq",left_operand)
+
     left_type = pila_tipos.pop()
 
     if left_type == BOOL and right_type == BOOL:
@@ -744,25 +802,20 @@ def imprimir_directorio_funciones(directorio):
     for nombre_funcion, info_funcion in directorio.items():
         print(f"\nFunción: {nombre_funcion}")
         print(f"  Tipo de retorno: {info_funcion['tipo']}")
-        
-
-        # Imprimir la cantidad de parámetros
-        param_count = info_funcion.get('param_count', 0)
-        print(f"  Cantidad de parámetros: {param_count}")
-        
-        # Imprimir parámetros de la función
+        print(f"  Cantidad de parámetros: {len(info_funcion['params'])}")
         print("  Parámetros:")
-        for param in info_funcion.get('params', []):
+        for param in info_funcion['params']:
             print(f"    {param[0]}: {param[1]}")
-
-        # Imprimir variables locales de la función
         print("  Variables Locales:")
-        for var_nombre, var_info in info_funcion.get('vars', {}).items():
+        for var_nombre, var_info in info_funcion['vars'].items():
             print(f"    {var_nombre}:")
             print(f"      Tipo: {var_info['type']}")
-            print(f"      Dirección: {var_info['address']}")
-    print("\n")
-
+            if 'size' in var_info:  # Es un arreglo
+                print(f"      Dirección base: {var_info['base_address']}")
+                print(f"      Límites: [{var_info['lower_bound']}, {var_info['upper_bound']}]")
+                print(f"      Tamaño: {var_info['size']}")
+            else:  # Es una variable normal
+                print(f"      Dirección: {var_info['address']}")
 #Aqui imprimo la tabla de constantes y direcciones
 def imprimir_tabla_constantes(tabla_cte):
     print("/////Tabla de Constantes/////")
@@ -864,22 +917,33 @@ def p_fill_jump_while(p):
 
 #FUNCIONES
 #Funcion que guarda el tipo, el nombre y valida que no exista la funcion
+
 def p_insert_dirfunc(p):
     '''insert_dirfunc :'''
-    global current_function
+    global current_function, current_temporal_int_address, current_temporal_float_address
     current_name = p[-1]  # El nombre de la función es el último token reconocido
-    current_type = p[-2] if p[-2] != 'VOID' else 'void'  # El tipo de la función, 'void' si es VOID
+    current_type = p[-2] if p[-2] != 'VOID' else None  # 'None' para funciones sin tipo de retorno
     
     # Verificar la semántica
     if current_name in directorio_funciones:
         raise Exception(f"Error: La función '{current_name}' ya está declarada.")
     else:
+        ret_address = None
+        if current_type == 'int':
+            ret_address = current_temporal_int_address
+            current_temporal_int_address += 1
+        elif current_type == 'float':
+            ret_address = current_temporal_float_address
+            current_temporal_float_address += 1
+        # Añadir otros tipos según sea necesario
+        
         # Insertar en la tabla DirFunc
         directorio_funciones[current_name] = {
             'tipo': current_type,
             'vars': {},
             'params': [],
-            'cuad_start': None  # Esto se actualizará cuando se defina el inicio del bloque de la función
+            'cuad_start': None,  # Esto se actualizará cuando se defina el inicio del bloque de la función
+            'ret_address': ret_address  # Agregar la dirección de retorno
         }
     # La función actual pasa a ser la función que se está definiendo
     current_function = current_name
@@ -890,33 +954,21 @@ def p_insert_dirfunc(p):
 def p_save_params(p):
     '''save_params : '''
     global current_function, directorio_funciones, param_table
-    # Primero almaceno los parametros 
     params = p[-2]
-    print(f"Params a guardar: {params}")
-
     if current_function != 'global':
-        # Imprimir el estado actual del directorio de funciones antes de la modificación
-
         param_count = 0
         for param_type, param_name in params:
-            # Verificar que el nombre y tipo de parámetro son los esperados
-
-            # Inserto los parámetros en la tabla de variables de la función y le asigno memoria
             address = assign_local_memory(param_type)
             directorio_funciones[current_function]['vars'][param_name] = {
                 'type': param_type,
                 'address': address
             }
-            #Ingreso los parametros en la tabla de parametros
-            param_table.append((current_function, param_name, param_type))
-            # Inserto los parámetros en la tabla de parámetros
-            directorio_funciones[current_function]['params'].append((param_name, param_type))
+
+            # Cambio aquí: Ahora guardamos una tupla con el nombre, tipo y dirección
+            directorio_funciones[current_function]['params'].append((param_name, param_type, address))
             param_count += 1
 
-        # Inserto el número de parámetros en la tabla de símbolos de la función
         directorio_funciones[current_function]['param_count'] = param_count
-        
-        # Imprimir el estado actual del directorio de funciones después de la modificación
     else:
         print("Error: intentando agregar parámetros fuera del contexto de una función")
 
@@ -961,19 +1013,17 @@ def p_end_function(p):
     '''end_function : '''
     global cuad, pila_operandos, current_function, temporal_count, current_local_bool_address, current_local_char_address, current_local_int_address, current_local_float_address
     
-    print(f"Estado actual del directorio de funciones: {directorio_funciones[current_function]}")
-    # Generar cuádruplo para 'return' si es necesario
-    if directorio_funciones[current_function]['tipo'] != 'void':
+    # Verificar si la función actual tiene un tipo de retorno y no es void
+    if directorio_funciones[current_function]['tipo'] is not None:
         if len(pila_operandos) > 0:
+            # Pop el valor de retorno de la pila de operandos
             return_value = pila_operandos.pop()
-            cuad.append(('ret', '', '', return_value))
+            # Obtener la dirección de retorno de la función actual
+            ret_address = directorio_funciones[current_function]['ret_address']
+            # Generar cuádruplo para asignar el valor de retorno a la dirección de retorno
+            cuad.append(('=', return_value, '', ret_address))
         else:
-            raise Exception(f"Error: Función '{current_function}' esperaba un valor de retorno")
-    print(directorio_funciones[current_function])
-    # Libera la tabla de variables locales (VarTable) para la función actual
-    #if current_function in directorio_funciones and current_function != 'global':
-     #   directorio_funciones[current_function]['vars'] = {}
-        #Se genera el cuadruplo de fin de funcion
+            raise Exception(f"Error: Función '{current_function}' esperaba un valor de retorno.")
     cuad.append(('ENDFunc', '', '', ''))
 
     #Reseteo las variables locales
@@ -992,18 +1042,62 @@ def p_generate_gosub(p):
     '''generate_gosub :'''
     global current_function_call, cuad, param_counter
 
-    var_type = directorio_funciones[current_function_call]['tipo']
-
     if current_function_call is not None:
-        # Obtiene la dirección de inicio de la función
         start_address = directorio_funciones[current_function_call]['cuad_start']
+        ret_address = directorio_funciones[current_function_call]['ret_address']  # Asumiendo que 'ret_address' es donde se almacena el valor de retorno
+
         # Genera el cuádruplo GOSUB
         cuad.append(('GOSUB', current_function_call, '', start_address))
-        cuad.append(('=', current_function_call, '', generate_temporal(var_type)))
 
-    # Reinicio current_function_call para una posible llamada de otra funcion
+        # Genera un cuádruplo para asignar el valor de retorno a un temporal
+        temp_ret = generate_temporal(directorio_funciones[current_function_call]['tipo'])
+        print ("temp_ret", temp_ret)
+        cuad.append(('=', ret_address, '', temp_ret))
+
+        # Agrega el temporal a la pila de operandos y tipos
+        pila_operandos.append(temp_ret)
+        pila_tipos.append(directorio_funciones[current_function_call]['tipo'])
+
+    # Reinicia para la siguiente llamada a función
     current_function_call = None
     param_counter = 0
+
+
+def p_call_func(p):
+    '''call_func : ID func_name_call PARIZQ gen_era argumentos_llamada verify_param_count PARDER generate_gosub PUNCOM'''
+    
+def p_argumentos_llamada(p):
+    '''argumentos_llamada : expresion verify_argument_type COMA argumentos_llamada
+                          | expresion verify_argument_type 
+                          | empty'''
+    if len(p) == 4:
+        # Manejar múltiples argumentos
+        p[0] = [p[1]] + p[4]
+    elif len(p) == 3:
+        # Manejar un solo argumento
+        p[0] = [p[1]]
+    else:
+        # No hay argumentos
+        p[0] = []
+    
+def p_func_name_call(p):
+    '''func_name_call :'''
+    global current_function_call, param_counter
+
+    function_name = p[-1]
+    if function_name not in directorio_funciones:
+        raise Exception(f"Error: La función '{function_name}' no está declarada.")
+
+    current_function_call = function_name
+
+def p_gen_era(p):
+    '''gen_era :'''
+    global param_counter
+    function_name = p[-3]
+    # Generar acción ERA
+    era_size = None
+    cuad.append(('ERA', '', era_size, function_name))
+
 
 #Punto que verifica si la cantidad de parametros es la correcta
 def p_verify_param_count(p):
@@ -1014,75 +1108,31 @@ def p_verify_param_count(p):
         if param_counter != expected_param_count:
             raise Exception(f"Error: Número incorrecto de argumentos para la función '{current_function_call}'. Esperado: {expected_param_count}, Recibido: {param_counter}")
 
-#Punto que ayuda a incrementar el contador de parametros
-def p_increment_param_counter(p):
-    '''increment_param_counter :'''
-    global param_counter, current_function_call
-
-    if current_function_call is not None:
-        param_counter += 1
-        # Verifica si el contador de parámetros ha excedido el número de parámetros esperados para la función
-        if param_counter > len(directorio_funciones[current_function_call]['params']):
-            raise Exception(f"Error: Demasiados argumentos pasados a la función '{current_function_call}'")
-
 #Punto que me ayuda a identificar si el tipo de dato que paso coincide con el parametro de la funcion
 def p_verify_argument_type(p):
     '''verify_argument_type :'''
     global param_counter, current_function_call
 
-    if not pila_operandos:
-        raise Exception("Error: No hay suficientes operandos para verificar el tipo del argumento")
+    if pila_operandos:
+        argument = pila_operandos.pop()
+        argument_type = pila_tipos.pop()
+        function_params = directorio_funciones[current_function_call]['params']
 
-    argument = pila_operandos.pop()
-    argument_type = pila_tipos.pop()
+        if param_counter >= len(function_params):
+            raise Exception(f"Error: Más argumentos de los esperados para la función '{current_function_call}'")
 
-    function_params = directorio_funciones[current_function_call]['params']
-    if param_counter > len(function_params):
-        raise Exception("Error: Demasiados argumentos para la función")
+        # Obtenemos la dirección del parámetro desde la tupla almacenada
+        param_address = function_params[param_counter][2]
+        current_param_type = function_params[param_counter][1]
 
-    current_param_type = function_params[param_counter][1]
-    if argument_type != current_param_type:
-        raise Exception(f"Error de tipo: Argumento {argument_type} no coincide con el parámetro {current_param_type}")
+        if argument_type != current_param_type:
+            raise Exception(f"Error de tipo: Argumento {argument_type} no coincide con el parámetro {current_param_type}")
 
-    # Genera el cuádruplo de acción PARAMETER
-    cuad.append(('PARAMETER', f'param#{param_counter + 1}' ,'', argument))
-    param_counter += 1
-
-
-def p_func_name_call(p):
-    '''func_name_call :'''
-    global current_function_call, param_counter
-
-    function_name = p[-1]
-    if function_name not in directorio_funciones:
-        raise Exception(f"Error: La función '{function_name}' no está declarada.")
-
-    current_function_call = function_name
-    param_counter = 0
-
-def p_gen_era(p):
-    '''gen_era :'''
-    function_name = p[-3] 
-    function_info = directorio_funciones[function_name]
-
-    # Generar acción ERA
-    #era_size = calculate_era_size(function_info)
-    era_size = None
-    cuad.append(('ERA', '', era_size, function_name))
-
-    # Inicializar contador de parámetros y puntero al primer tipo de parámetro
-    param_counter = 0
-    first_param_type = None
-    if function_info['params']:
-        first_param_type = function_info['params'][0][1] 
-
-    p[0] = (param_counter, first_param_type)
-
-
-
-
-
-
+        # Genera el cuádruplo de acción PARAMETER
+        cuad.append(('PARAMETER', argument, '', param_address))
+        param_counter += 1
+    else:
+        pass
 
 parser = yacc.yacc()
 def parse(data):
